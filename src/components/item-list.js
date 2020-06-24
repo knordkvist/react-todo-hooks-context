@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ItemList({ items }) {
+export default function ItemList({ items, children }) {
   function Item({ item }) {
     return (
       <li className={item.status === 'todo' ? 'item-todo' : 'item-completed'}>
@@ -20,14 +20,7 @@ export default function ItemList({ items }) {
       {items.map((item) => {
         return <Item item={item} />;
       })}
-      <li className="item-add">
-        <label>
-          <span role="img" aria-label="Add">
-            ➕
-          </span>
-          <input type="text" placeholder="todo" />
-        </label>
-      </li>
+      {children}
     </ul>
   );
 }

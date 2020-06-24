@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ItemList from './item-list';
+import classNames from 'classnames';
+import { AppStateContext } from '../context/app-state';
 
 export default function CompletedItems() {
-  const completed = [{ description: 'buy milk', status: 'completed' }];
+  const { completedItems } = useContext(AppStateContext);
   return (
     <div
-      className="completed-items-container"
-      data-has-items={completed.length > 0}
+      className={classNames('completed-items-container', {
+        empty: completedItems.length === 0,
+      })}
     >
       <div className="separator">Completed items</div>
-      <ItemList items={completed} />
+      <ItemList items={completedItems} />
     </div>
   );
 }
