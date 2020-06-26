@@ -10,8 +10,14 @@ export default function ItemList({ items, completed, children }) {
             type="checkbox"
             checked={completed ? true : false}
             data-testid={item.id}
+            onChange={() => {}}
           />
-          <input type="text" value={item.text} data-item-id={item.id} />
+          <input
+            type="text"
+            value={item.text}
+            data-item-id={item.id}
+            onChange={() => {}}
+          />
         </label>
       </li>
     );
