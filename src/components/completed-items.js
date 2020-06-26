@@ -12,7 +12,7 @@ export default function CompletedItems() {
       })}
     >
       <div className="separator">Completed items</div>
-      <ItemList items={completedItems} />
+      <ItemList items={completedItems} completed={true} />
     </div>
   );
 }

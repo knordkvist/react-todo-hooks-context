@@ -1,9 +1,9 @@
 import React from 'react';
-import Header from './components/header';
-import ActiveItems from './components/active-items';
-import CompletedItems from './components/completed-items';
+import Header from './header';
+import ActiveItems from './active-items';
+import CompletedItems from './completed-items';
 
-export function TodoList() {
+export default function TodoList() {
   return (
     <div className="app-container">
       <Header />
