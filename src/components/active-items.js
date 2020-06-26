@@ -20,6 +20,7 @@ export default function ActiveItems() {
             value={text}
             onChange={(event) => setText(event.target.value)}
             onKeyDown={(event) => event.key === 'Enter' && addItem(text)}
+            autoFocus
           />
         </label>
       </li>
