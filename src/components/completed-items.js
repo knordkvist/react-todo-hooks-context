@@ -7,6 +7,7 @@ export default function CompletedItems() {
   const { completedItems } = useContext(AppStateContext);
   return (
     <div
+      data-testid="completed-items-container"
       className={classNames('completed-items-container', {
         empty: completedItems.length === 0,
       })}

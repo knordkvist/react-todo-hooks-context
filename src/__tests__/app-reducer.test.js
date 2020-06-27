@@ -1,4 +1,8 @@
-import appReducer, { itemState, addItem } from '../context/app-reducer';
+import appReducer, {
+  itemState,
+  addItem,
+  completeItem,
+} from '../context/app-reducer';
 
 // This is a useful feature of reducers: if we decide to use Redux later,
 // it will call each reducer with no state to produce the initial state for the store.
@@ -18,5 +22,17 @@ it('can add items', () => {
     items: [expectedItem],
     activeItems: [expectedItem],
     completedItems: [],
+  });
+});
+
+it('can complete active items', () => {
+  const item = { text: 'buy things', id: 0, state: itemState.active };
+  const completedItem = { ...item, state: itemState.completed };
+  const withItem = appReducer(undefined, addItem(item));
+  const afterCompleting = appReducer(withItem, completeItem(item.id));
+  expect(afterCompleting).toEqual({
+    items: [completedItem],
+    activeItems: [],
+    completedItems: [completedItem],
   });
 });

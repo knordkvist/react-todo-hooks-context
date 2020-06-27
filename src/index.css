@@ -53,7 +53,7 @@ li input[type='text'] {
   margin-left: 12px;
 }
 
-li.completed input[type='text'] {
+ul.check-list.completed .item-text-input {
   text-decoration: line-through;
 }
 

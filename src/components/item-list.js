@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
+import { AppStateContext } from '../context/app-state';
 
 export default function ItemList({ items, completed, children }) {
+  const { completeItem } = useContext(AppStateContext);
+
   function Item({ item }) {
     return (
       <li>
@@ -10,9 +13,10 @@ export default function ItemList({ items, completed, children }) {
             type="checkbox"
             checked={completed ? true : false}
             data-testid={item.id}
-            onChange={() => {}}
+            onChange={() => !completed && completeItem(item.id)}
           />
           <input
+            className="item-text-input"
             type="text"
             value={item.text}
             data-item-id={item.id}
