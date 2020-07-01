@@ -2,6 +2,7 @@ import appReducer, {
   itemState,
   addItem,
   completeItem,
+  uncheckItem,
 } from '../context/app-reducer';
 
 // This is a useful feature of reducers: if we decide to use Redux later,
@@ -35,4 +36,13 @@ it('can complete active items', () => {
     activeItems: [],
     completedItems: [completedItem],
   });
+});
+
+it('can uncheck completed items', () => {
+  const item = { text: 'do stuff', id: 0 };
+  const withAddedItem = appReducer(undefined, addItem(item));
+  const withCompletedItem = appReducer(withAddedItem, completeItem(item.id));
+  const withUncheckedItem = appReducer(withCompletedItem, uncheckItem(item.id));
+
+  expect(withUncheckedItem).toEqual(withAddedItem);
 });

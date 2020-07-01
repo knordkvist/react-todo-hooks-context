@@ -28,8 +28,10 @@ export default function ActiveItems() {
   }
 
   return (
-    <ItemList items={activeItems} completed={false}>
-      <AddItem />
-    </ItemList>
+    <div data-testid="active-items-container">
+      <ItemList items={activeItems} completed={false}>
+        <AddItem />
+      </ItemList>
+    </div>
   );
 }

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { AppStateContext } from '../context/app-state';
 
 export default function ItemList({ items, completed, children }) {
-  const { completeItem } = useContext(AppStateContext);
+  const { completeItem, uncheckItem } = useContext(AppStateContext);
 
   function Item({ item }) {
     return (
@@ -13,7 +13,9 @@ export default function ItemList({ items, completed, children }) {
             type="checkbox"
             checked={completed ? true : false}
             data-testid={item.id}
-            onChange={() => !completed && completeItem(item.id)}
+            onChange={() =>
+              completed ? uncheckItem(item.id) : completeItem(item.id)
+            }
           />
           <input
             className="item-text-input"

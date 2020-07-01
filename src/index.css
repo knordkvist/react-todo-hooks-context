@@ -55,6 +55,7 @@ li input[type='text'] {
 
 ul.check-list.completed .item-text-input {
   text-decoration: line-through;
+  color: gray;
 }
 
 .separator {

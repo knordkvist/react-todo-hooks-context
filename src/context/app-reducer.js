@@ -22,6 +22,12 @@ export const completeItem = (itemId) => ({
 });
 completeItem.type = 'app-state/completeItem';
 
+export const uncheckItem = (itemId) => ({
+  type: uncheckItem.type,
+  payload: { id: itemId },
+});
+uncheckItem.type = 'app-state/uncheckItem';
+
 const createState = (items) => ({
   items,
   activeItems: items.filter((item) => item.state === itemState.active),
@@ -36,10 +42,17 @@ export default function reducer(state = initialState, { type, payload } = {}) {
       return createState([...state.items, payload]);
     case completeItem.type:
       const items = state.items.map((item) => {
-        if (item.id != payload.id) return item;
+        if (item.id !== payload.id) return item;
         return { ...item, state: itemState.completed };
       });
       return createState(items);
+    case uncheckItem.type: {
+      const items = state.items.map((item) => {
+        if (item.id !== payload.id) return item;
+        return { ...item, state: itemState.active };
+      });
+      return createState(items);
+    }
     default:
       return state;
   }
