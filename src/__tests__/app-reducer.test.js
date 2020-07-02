@@ -10,6 +10,7 @@ import appReducer, {
 // This also makes it very easy to produce the initial state for unit testing
 it('produces a valid initial state', () => {
   const initialState = appReducer();
+
   expect(initialState).toEqual({
     items: [],
     activeItems: [],
@@ -19,7 +20,10 @@ it('produces a valid initial state', () => {
 
 it('can add items', () => {
   const expectedItem = { text: 'item1', id: 1, state: itemState.active };
-  expect(appReducer(undefined, addItem(expectedItem))).toEqual({
+
+  const result = appReducer(undefined, addItem(expectedItem));
+
+  expect(result).toEqual({
     items: [expectedItem],
     activeItems: [expectedItem],
     completedItems: [],
@@ -30,7 +34,9 @@ it('can complete active items', () => {
   const item = { text: 'buy things', id: 0, state: itemState.active };
   const completedItem = { ...item, state: itemState.completed };
   const withItem = appReducer(undefined, addItem(item));
+
   const afterCompleting = appReducer(withItem, completeItem(item.id));
+
   expect(afterCompleting).toEqual({
     items: [completedItem],
     activeItems: [],
@@ -42,6 +48,7 @@ it('can uncheck completed items', () => {
   const item = { text: 'do stuff', id: 0 };
   const withAddedItem = appReducer(undefined, addItem(item));
   const withCompletedItem = appReducer(withAddedItem, completeItem(item.id));
+
   const withUncheckedItem = appReducer(withCompletedItem, uncheckItem(item.id));
 
   expect(withUncheckedItem).toEqual(withAddedItem);
