@@ -1,8 +1,10 @@
 import appReducer, {
+  Items,
   itemState,
   addItem,
   completeItem,
   uncheckItem,
+  editItem,
 } from '../context/app-reducer';
 
 // This is a useful feature of reducers: if we decide to use Redux later,
@@ -11,37 +13,31 @@ import appReducer, {
 it('produces a valid initial state', () => {
   const initialState = appReducer();
 
-  expect(initialState).toEqual({
-    items: [],
-    activeItems: [],
-    completedItems: [],
-  });
+  expect(initialState).toEqual(new Items([]));
 });
 
 it('can add items', () => {
-  const expectedItem = { text: 'item1', id: 1, state: itemState.active };
+  const expectedState = new Items([
+    {
+      text: 'item1',
+      id: 0,
+      state: itemState.active,
+    },
+  ]);
 
-  const result = appReducer(undefined, addItem(expectedItem));
+  const result = appReducer(undefined, addItem({ text: 'item1' }));
 
-  expect(result).toEqual({
-    items: [expectedItem],
-    activeItems: [expectedItem],
-    completedItems: [],
-  });
+  expect(result).toEqual(expectedState);
 });
 
 it('can complete active items', () => {
-  const item = { text: 'buy things', id: 0, state: itemState.active };
-  const completedItem = { ...item, state: itemState.completed };
+  const item = { text: 'buy things', id: 0 };
   const withItem = appReducer(undefined, addItem(item));
+  const expectedState = new Items([{ ...item, state: itemState.completed }]);
 
   const afterCompleting = appReducer(withItem, completeItem(item.id));
 
-  expect(afterCompleting).toEqual({
-    items: [completedItem],
-    activeItems: [],
-    completedItems: [completedItem],
-  });
+  expect(afterCompleting).toEqual(expectedState);
 });
 
 it('can uncheck completed items', () => {
@@ -52,4 +48,16 @@ it('can uncheck completed items', () => {
   const withUncheckedItem = appReducer(withCompletedItem, uncheckItem(item.id));
 
   expect(withUncheckedItem).toEqual(withAddedItem);
+});
+
+it('can edit active items', () => {
+  const item = { text: 'unedited', id: 0 };
+  const expectedState = appReducer(
+    undefined,
+    addItem({ ...item, text: 'edited' })
+  );
+
+  const edited = appReducer(new Items([item]), editItem(item.id, 'edited'));
+
+  expect(edited).toEqual(expectedState);
 });

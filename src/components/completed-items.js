@@ -4,7 +4,10 @@ import classNames from 'classnames';
 import { AppStateContext } from '../context/app-state';
 
 export default function CompletedItems() {
-  const { completedItems } = useContext(AppStateContext);
+  const {
+    state: { completedItems },
+  } = useContext(AppStateContext);
+
   return (
     <div
       data-testid="completed-items-container"

@@ -1,7 +1,12 @@
 import React, { createContext, useReducer } from 'react';
-import appReducer, { addItem, completeItem, uncheckItem } from './app-reducer';
+import appReducer, {
+  addItem,
+  completeItem,
+  uncheckItem,
+  editItem,
+} from './app-reducer';
 
-export const AppStateContext = createContext(appReducer);
+export const AppStateContext = createContext(appReducer(undefined));
 
 export const AppStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, appReducer());
@@ -9,14 +14,16 @@ export const AppStateProvider = ({ children }) => {
   const dispatchAddItem = (text) => dispatch(addItem({ text }));
   const dispatchCompleteItem = (itemId) => dispatch(completeItem(itemId));
   const dispatchUncheckItem = (itemId) => dispatch(uncheckItem(itemId));
+  const dispatchEditItem = (itemId, text) => dispatch(editItem(itemId, text));
 
   return (
     <AppStateContext.Provider
       value={{
-        ...state,
+        state,
         addItem: dispatchAddItem,
         completeItem: dispatchCompleteItem,
         uncheckItem: dispatchUncheckItem,
+        editItem: dispatchEditItem,
       }}
     >
       {children}

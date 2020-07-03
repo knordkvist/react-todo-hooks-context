@@ -16,17 +16,18 @@ function renderUtil() {
   const getNewItemInput = () => renderResult.getByPlaceholderText('todo...');
   const completedItemsContainer = getByTestId('completed-items-container');
   const activeItemsContainer = getByTestId('active-items-container');
-  const addItem = (text) => {
+  const addItem = async (text = '') => {
     const newItemInput = getNewItemInput();
-    userEvent.type(newItemInput, text);
+    // The delay is useful for catching focus loss due to rerendering
+    await userEvent.type(newItemInput, text, { delay: 1 });
     fireEvent.keyDown(newItemInput, { key: 'Enter', keyCode: 'Enter' });
 
-    const addedElement = getByDisplayValue(text);
-    const itemId = addedElement.dataset.itemId;
+    const addedInput = getByDisplayValue(text);
+    const itemId = addedInput.dataset.itemId;
     const addedCheckBox = getByTestId(itemId);
 
     return {
-      addedElement,
+      addedInput,
       itemId,
       addedCheckBox,
     };
@@ -41,12 +42,20 @@ function renderUtil() {
   };
 }
 
-it('adds an active todo when pressing enter', () => {
+it('adds an active todo when pressing enter', async () => {
   const { addItem } = renderUtil();
-
-  const { addedCheckBox } = addItem('buy milk');
+  const text = 'buy milk';
+  const { addedCheckBox, addedInput } = await addItem(text);
 
   expect(addedCheckBox.checked).toBe(false);
+  expect(addedInput.value).toBe(text);
+});
+
+it('clears the new item input after adding a new item', async () => {
+  const { addItem, getNewItemInput } = renderUtil();
+  await addItem('a new item!');
+
+  expect(getNewItemInput().value).toBe('');
 });
 
 it('automatically focuses the new item input', () => {
@@ -55,11 +64,11 @@ it('automatically focuses the new item input', () => {
   expect(getNewItemInput()).toHaveFocus();
 });
 
-it('can complete active items', () => {
+it('can complete active items', async () => {
   const { addItem, completedItemsContainer } = renderUtil();
   const text = 'do thing';
 
-  const { addedCheckBox, itemId } = addItem(text);
+  const { addedCheckBox, itemId } = await addItem(text);
   fireEvent.click(addedCheckBox);
 
   // Make sure input and checkbox has moved to the 'completed items' section
@@ -69,7 +78,7 @@ it('can complete active items', () => {
   expect(input).toBeDefined();
 });
 
-it('can uncheck completed items', () => {
+it('can uncheck completed items', async () => {
   const {
     addItem,
     completedItemsContainer,
@@ -77,7 +86,7 @@ it('can uncheck completed items', () => {
   } = renderUtil();
   const text = 'something fun';
 
-  const { addedCheckBox, itemId } = addItem(text);
+  const { addedCheckBox, itemId } = await addItem(text);
   fireEvent.click(addedCheckBox);
   const completedCheckBox = getByTestIdUnbound(completedItemsContainer, itemId);
   fireEvent.click(completedCheckBox);
@@ -85,4 +94,15 @@ it('can uncheck completed items', () => {
   const uncheckedCheckBox = getByTestIdUnbound(activeItemsContainer, itemId);
   expect(uncheckedCheckBox.checked).toBe(false);
   expect(getByDisplayValueUnbound(activeItemsContainer, text));
+});
+
+it('can edit active items', async () => {
+  const { addItem, getByDisplayValue } = renderUtil();
+  const text = 'unedited';
+  const { addedInput } = await addItem(text);
+  const newText = 'i was edited';
+
+  await userEvent.type(addedInput, newText, { delay: 1 });
+
+  expect(addedInput.value).toBe(newText);
 });

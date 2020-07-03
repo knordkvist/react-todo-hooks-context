@@ -28,30 +28,58 @@ export const uncheckItem = (itemId) => ({
 });
 uncheckItem.type = 'app-state/uncheckItem';
 
-const createState = (items) => ({
-  items,
-  activeItems: items.filter((item) => item.state === itemState.active),
-  completedItems: items.filter((item) => item.state === itemState.completed),
+export const editItem = (itemId, text) => ({
+  type: editItem.type,
+  payload: { id: itemId, text },
 });
+editItem.type = 'app-state/editItem';
 
-const initialState = createState([]);
+class Item {
+  constructor({ text = '', state = itemState.active, id = nextId() }) {
+    this.text = text;
+    this.state = state;
+    this.id = id;
+  }
+}
 
-export default function reducer(state = initialState, { type, payload } = {}) {
+export class Items {
+  constructor(items) {
+    this.items = items.map((item) => new Item(item));
+  }
+
+  get activeItems() {
+    return this.items.filter((item) => item.state === itemState.active);
+  }
+
+  get completedItems() {
+    return this.items.filter((item) => item.state === itemState.completed);
+  }
+}
+
+export default function reducer(state = new Items([]), { type, payload } = {}) {
   switch (type) {
     case addItem.type:
-      return createState([...state.items, payload]);
+      return new Items([...state.items, payload]);
     case completeItem.type:
       const items = state.items.map((item) => {
         if (item.id !== payload.id) return item;
         return { ...item, state: itemState.completed };
       });
-      return createState(items);
+      return new Items(items);
     case uncheckItem.type: {
       const items = state.items.map((item) => {
         if (item.id !== payload.id) return item;
         return { ...item, state: itemState.active };
       });
-      return createState(items);
+      return new Items(items);
+    }
+    case editItem.type: {
+      const items = state.items.map((item) => {
+        if (item.id !== payload.id) return item;
+
+        return { ...item, text: payload.text };
+      });
+      return new Items(items);
     }
     default:
       return state;
