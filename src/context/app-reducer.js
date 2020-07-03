@@ -9,7 +9,7 @@ export const itemState = {
 export const addItem = ({
   text = '',
   id = nextId(),
-  state = itemState.active,
+  state = Item.State.active,
 }) => ({
   type: addItem.type,
   payload: { id, text, state },
@@ -34,12 +34,17 @@ export const editItem = (itemId, text) => ({
 });
 editItem.type = 'app-state/editItem';
 
-class Item {
-  constructor({ text = '', state = itemState.active, id = nextId() }) {
+export class Item {
+  constructor({ text = '', state = Item.State.active, id = nextId() }) {
     this.text = text;
     this.state = state;
     this.id = id;
   }
+
+  static State = {
+    active: 'active',
+    completed: 'completed',
+  };
 }
 
 export class Items {
@@ -48,11 +53,11 @@ export class Items {
   }
 
   get activeItems() {
-    return this.items.filter((item) => item.state === itemState.active);
+    return this.items.filter((item) => item.state === Item.State.active);
   }
 
   get completedItems() {
-    return this.items.filter((item) => item.state === itemState.completed);
+    return this.items.filter((item) => item.state === Item.State.completed);
   }
 }
 
@@ -63,13 +68,13 @@ export default function reducer(state = new Items([]), { type, payload } = {}) {
     case completeItem.type:
       const items = state.items.map((item) => {
         if (item.id !== payload.id) return item;
-        return { ...item, state: itemState.completed };
+        return { ...item, state: Item.State.completed };
       });
       return new Items(items);
     case uncheckItem.type: {
       const items = state.items.map((item) => {
         if (item.id !== payload.id) return item;
-        return { ...item, state: itemState.active };
+        return { ...item, state: Item.State.active };
       });
       return new Items(items);
     }
