@@ -38,7 +38,7 @@ export default function ActiveItems() {
 
   return (
     <div data-testid="active-items-container">
-      <ItemList items={state.activeItems} completed={false}>
+      <ItemList items={state.activeItems}>
         <AddItem />
       </ItemList>
     </div>

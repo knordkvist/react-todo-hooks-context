@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import classNames from 'classnames';
+import { Item as ReducerItem } from '../context/app-reducer';
 import { AppStateContext } from '../context/app-state';
+const ItemState = ReducerItem.State;
 
-function Item({ item, completed }) {
+function Item({ item }) {
   const { completeItem, uncheckItem, editItem } = useContext(AppStateContext);
 
   return (
@@ -10,10 +11,12 @@ function Item({ item, completed }) {
       <label>
         <input
           type="checkbox"
-          checked={completed === true}
+          checked={item.state === ItemState.completed}
           data-testid={item.id}
           onChange={() =>
-            completed ? uncheckItem(item.id) : completeItem(item.id)
+            item.state === ItemState.completed
+              ? uncheckItem(item.id)
+              : completeItem(item.id)
           }
         />
         <input
@@ -28,11 +31,11 @@ function Item({ item, completed }) {
   );
 }
 
-export default function ItemList({ items, completed, children }) {
+export default function ItemList({ items, children }) {
   return (
-    <ul className={classNames('check-list', { completed: completed })}>
+    <ul className="check-list">
       {items.map((item) => {
-        return <Item item={item} key={item.id} completed={completed} />;
+        return <Item item={item} key={item.id} />;
       })}
       {children}
     </ul>
