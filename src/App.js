@@ -1,12 +1,18 @@
 import React from 'react';
 import './index.css';
 import { AppStateProvider } from './context/app-state';
-import TodoList from './components/todo-list';
+import Header from './components/header';
+import ActiveItems from './components/active-items';
+import CompletedItems from './components/completed-items';
 
 export default function App() {
   return (
     <AppStateProvider>
-      <TodoList />
+      <div className="app-container">
+        <Header />
+        <ActiveItems />
+        <CompletedItems />
+      </div>
     </AppStateProvider>
   );
 }
