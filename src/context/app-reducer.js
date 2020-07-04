@@ -1,5 +1,8 @@
+import { Items } from './Items';
+import { Item } from './Item';
+
 let id = 0;
-const nextId = () => id++;
+export const nextId = () => id++;
 
 export const itemState = {
   active: 'active',
@@ -33,33 +36,6 @@ export const editItem = (itemId, text) => ({
   payload: { id: itemId, text },
 });
 editItem.type = 'app-state/editItem';
-
-export class Item {
-  constructor({ text = '', state = Item.State.Active, id = nextId() }) {
-    this.text = text;
-    this.state = state;
-    this.id = id;
-  }
-
-  static State = {
-    Active: 'active',
-    Completed: 'completed',
-  };
-}
-
-export class Items {
-  constructor(items) {
-    this.items = items.map((item) => new Item(item));
-  }
-
-  get activeItems() {
-    return this.items.filter((item) => item.state === Item.State.Active);
-  }
-
-  get completedItems() {
-    return this.items.filter((item) => item.state === Item.State.Completed);
-  }
-}
 
 export default function reducer(state = new Items([]), { type, payload } = {}) {
   switch (type) {
