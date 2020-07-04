@@ -14,9 +14,7 @@ export function AddItem() {
   return (
     <li className="item-add">
       <label>
-        <span aria-label="Plus sign" role="img">
-          ➕
-        </span>
+        <span className="item-add-img" aria-label="Plus sign" role="img"></span>
         <input
           type="text"
           placeholder="todo..."
