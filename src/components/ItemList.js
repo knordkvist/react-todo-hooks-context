@@ -11,10 +11,10 @@ function Item({ item }) {
       <label>
         <input
           type="checkbox"
-          checked={item.state === ItemState.completed}
+          checked={item.state === ItemState.Completed}
           data-testid={item.id}
           onChange={() =>
-            item.state === ItemState.completed
+            item.state === ItemState.Completed
               ? uncheckItem(item.id)
               : completeItem(item.id)
           }

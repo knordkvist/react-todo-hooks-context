@@ -21,10 +21,10 @@ it('can add items', () => {
     {
       text: 'item1',
       id: 0,
-      state: Item.State.active,
+      state: Item.State.Active,
     },
   ]);
-
+  const state = Item.State;
   const result = appReducer(undefined, addItem({ text: 'item1' }));
 
   expect(result).toEqual(expectedState);
@@ -33,7 +33,9 @@ it('can add items', () => {
 it('can complete active items', () => {
   const item = { text: 'buy things', id: 0 };
   const withItem = appReducer(undefined, addItem(item));
-  const expectedState = new Items([{ ...item, state: Item.State.completed }]);
+  const expectedState = new Items([{ ...item, state: Item.State.Completed }]);
+  const completed = Item.State.Completed;
+  const active = Item.State.Active;
 
   const afterCompleting = appReducer(withItem, completeItem(item.id));
 
