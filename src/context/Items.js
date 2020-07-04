@@ -1,6 +1,6 @@
-import { Item } from './Item';
+import Item from './Item';
 
-export class Items {
+export default class Items {
   constructor(items) {
     this.items = items.map((item) => new Item(item));
   }

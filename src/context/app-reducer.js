@@ -1,5 +1,5 @@
-import { Items } from './Items';
-import { Item } from './Item';
+import Items from './Items';
+import Item from './Item';
 
 let id = 0;
 export const nextId = () => id++;

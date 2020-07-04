@@ -1,6 +1,6 @@
 import { nextId } from './app-reducer';
 
-export class Item {
+export default class Item {
   constructor({ text = '', state = Item.State.Active, id = nextId() }) {
     this.text = text;
     this.state = state;

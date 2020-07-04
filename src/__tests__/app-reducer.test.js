@@ -4,8 +4,8 @@ import appReducer, {
   uncheckItem,
   editItem,
 } from '../context/app-reducer';
-import { Item } from '../context/Item';
-import { Items } from '../context/Items';
+import Item from '../context/Item';
+import Items from '../context/Items';
 
 // This is a useful feature of reducers: if we decide to use Redux later,
 // it will call each reducer with no state to produce the initial state for the store.

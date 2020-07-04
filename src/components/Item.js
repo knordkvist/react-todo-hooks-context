@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { Item as ReducerItem } from '../context/Item';
+import ContextItem from '../context/Item';
 import { AppStateContext } from '../context/app-state';
-const ItemState = ReducerItem.State;
+const ItemState = ContextItem.State;
 
 export default function Item({ item }) {
   const { completeItem, uncheckItem, editItem } = useContext(AppStateContext);
