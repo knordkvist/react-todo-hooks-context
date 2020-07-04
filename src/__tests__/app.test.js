@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  render,
-  fireEvent,
-  getByTestId as getByTestIdUnbound,
-  getByDisplayValue as getByDisplayValueUnbound,
-} from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
+import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import App from '../app';
 
@@ -64,15 +60,15 @@ it('automatically focuses the new item input', () => {
 });
 
 it('can complete active items', async () => {
-  const { addItem, completedItemsContainer } = renderUtil();
+  const { addItem, completedItemsContainer, getByTestId } = renderUtil();
   const text = 'do thing';
 
   const { addedCheckBox, itemId } = await addItem(text);
   fireEvent.click(addedCheckBox);
 
   // Make sure input and checkbox has moved to the 'completed items' section
-  const checkBox = getByTestIdUnbound(completedItemsContainer, itemId);
-  const input = getByDisplayValueUnbound(completedItemsContainer, text);
+  const checkBox = within(completedItemsContainer).getByTestId(itemId);
+  const input = within(completedItemsContainer).getByDisplayValue(text);
   expect(checkBox.checked).toBe(true);
   expect(input).toBeDefined();
 });
@@ -87,12 +83,13 @@ it('can uncheck completed items', async () => {
 
   const { addedCheckBox, itemId } = await addItem(text);
   fireEvent.click(addedCheckBox);
-  const completedCheckBox = getByTestIdUnbound(completedItemsContainer, itemId);
+  const completedCheckBox = within(completedItemsContainer).getByTestId(itemId);
   fireEvent.click(completedCheckBox);
 
-  const uncheckedCheckBox = getByTestIdUnbound(activeItemsContainer, itemId);
+  const uncheckedCheckBox = within(activeItemsContainer).getByTestId(itemId);
+  const input = within(activeItemsContainer).getByDisplayValue(text);
   expect(uncheckedCheckBox.checked).toBe(false);
-  expect(getByDisplayValueUnbound(activeItemsContainer, text));
+  expect(input).toBeDefined();
 });
 
 it('can edit active items', async () => {
