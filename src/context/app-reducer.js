@@ -4,11 +4,6 @@ import { Item } from './Item';
 let id = 0;
 export const nextId = () => id++;
 
-export const itemState = {
-  active: 'active',
-  completed: 'completed',
-};
-
 export const addItem = ({
   text = '',
   id = nextId(),
