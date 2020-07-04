@@ -13,11 +13,10 @@ function renderUtil() {
   const renderResult = render(<App />);
   const { getByDisplayValue, getByTestId } = renderResult;
 
-  const getNewItemInput = () => renderResult.getByPlaceholderText('todo...');
+  const newItemInput = renderResult.getByPlaceholderText('todo...');
   const completedItemsContainer = getByTestId('completed-items-container');
   const activeItemsContainer = getByTestId('active-items-container');
   const addItem = async (text = '') => {
-    const newItemInput = getNewItemInput();
     // The delay is useful for catching focus loss due to rerendering
     await userEvent.type(newItemInput, text, { delay: 1 });
     fireEvent.keyDown(newItemInput, { key: 'Enter', keyCode: 'Enter' });
@@ -35,7 +34,7 @@ function renderUtil() {
 
   return {
     ...renderResult,
-    getNewItemInput,
+    newItemInput,
     addItem,
     completedItemsContainer,
     activeItemsContainer,
@@ -52,16 +51,16 @@ it('adds an active todo when pressing enter', async () => {
 });
 
 it('clears the new item input after adding a new item', async () => {
-  const { addItem, getNewItemInput } = renderUtil();
+  const { addItem, newItemInput } = renderUtil();
   await addItem('a new item!');
 
-  expect(getNewItemInput().value).toBe('');
+  expect(newItemInput.value).toBe('');
 });
 
 it('automatically focuses the new item input', () => {
-  const { getNewItemInput } = renderUtil();
+  const { newItemInput } = renderUtil();
 
-  expect(getNewItemInput()).toHaveFocus();
+  expect(newItemInput).toHaveFocus();
 });
 
 it('can complete active items', async () => {
