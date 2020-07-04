@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import ItemList from './item-list';
+import ItemList from './ItemList';
 import { AppStateContext } from '../context/app-state';
 
 function AddItem() {

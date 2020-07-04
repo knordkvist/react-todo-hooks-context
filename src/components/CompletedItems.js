@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import ItemList from './item-list';
+import ItemList from './ItemList';
 import classNames from 'classnames';
 import { AppStateContext } from '../context/app-state';
 
