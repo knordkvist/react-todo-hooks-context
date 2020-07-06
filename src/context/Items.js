@@ -1,3 +1,4 @@
+import { immerable } from 'immer';
 import Item from './Item';
 
 export default class Items {
@@ -13,3 +14,4 @@ export default class Items {
     return this.items.filter((item) => item.state === Item.State.Completed);
   }
 }
+Items[immerable] = true;

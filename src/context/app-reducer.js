@@ -1,6 +1,7 @@
 import Items from './Items';
 import Item from './Item';
 import { v4 as uuidv4 } from 'uuid';
+import produce from 'immer';
 
 export const nextId = uuidv4;
 
@@ -32,32 +33,28 @@ export const editItem = (itemId, text) => ({
 });
 editItem.type = 'app-state/editItem';
 
-export default function reducer(state = new Items([]), { type, payload } = {}) {
+export default produce((draft, { type, payload } = {}) => {
+  const set = (setter) => {
+    const item = draft.items.find((item) => item.id === payload.id);
+    setter(item);
+  };
+
   switch (type) {
     case addItem.type:
-      return new Items([...state.items, payload]);
+      draft.items.push(payload);
+      return;
     case completeItem.type:
-      const items = state.items.map((item) => {
-        if (item.id !== payload.id) return item;
-        return { ...item, state: Item.State.Completed };
-      });
-      return new Items(items);
+      set((item) => (item.state = Item.State.Completed));
+      return;
     case uncheckItem.type: {
-      const items = state.items.map((item) => {
-        if (item.id !== payload.id) return item;
-        return { ...item, state: Item.State.Active };
-      });
-      return new Items(items);
+      set((item) => (item.state = Item.State.Active));
+      return;
     }
     case editItem.type: {
-      const items = state.items.map((item) => {
-        if (item.id !== payload.id) return item;
-
-        return { ...item, text: payload.text };
-      });
-      return new Items(items);
+      set((item) => (item.text = payload.text));
+      return;
     }
     default:
-      return state;
+      return draft;
   }
-}
+}, new Items([]));

@@ -1,3 +1,4 @@
+import { immerable } from 'immer';
 import { nextId } from './app-reducer';
 
 export default class Item {
@@ -12,3 +13,4 @@ export default class Item {
     Completed: 'completed',
   };
 }
+Item[immerable] = true;
