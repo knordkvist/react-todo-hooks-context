@@ -1,8 +1,8 @@
 import Items from './Items';
 import Item from './Item';
+import { v4 as uuidv4 } from 'uuid';
 
-let id = 0;
-export const nextId = () => id++;
+export const nextId = uuidv4;
 
 export const addItem = ({
   text = '',

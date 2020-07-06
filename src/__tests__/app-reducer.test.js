@@ -17,15 +17,18 @@ it('produces a valid initial state', () => {
 });
 
 it('can add items', () => {
-  const expectedState = new Items([
-    {
-      text: 'item1',
-      id: 0,
-      state: Item.State.Active,
-    },
-  ]);
+  const expectedItem = {
+    text: 'item1',
+    id: 0,
+    state: Item.State.Active,
+  };
+
+  const expectedState = new Items([expectedItem]);
   const state = Item.State;
-  const result = appReducer(undefined, addItem({ text: 'item1' }));
+  const result = appReducer(
+    undefined,
+    addItem({ text: expectedItem.text, id: expectedItem.id })
+  );
 
   expect(result).toEqual(expectedState);
 });
