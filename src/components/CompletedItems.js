@@ -12,10 +12,13 @@ export default function CompletedItems() {
     <div
       data-testid="completed-items-container"
       className={classNames('completed-items-container', {
-        empty: completedItems.length === 0,
+        hidden: completedItems.length < 1,
       })}
     >
-      <div className="separator">Completed items</div>
+      <div className="separator">
+        {completedItems.length} Completed{' '}
+        {completedItems.length > 1 ? 'items' : 'item'}
+      </div>
       <ItemList items={completedItems} />
     </div>
   );

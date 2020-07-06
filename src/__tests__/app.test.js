@@ -102,3 +102,22 @@ it('can edit active items', async () => {
 
   expect(addedInput.value).toBe(newText);
 });
+
+it('shows the number of completed items', async () => {
+  const { addItem, getByText } = renderUtil();
+  const addAndComplete = async (text) => {
+    const { addedCheckBox } = await addItem(text);
+    fireEvent.click(addedCheckBox);
+  };
+
+  await addAndComplete('item1');
+  expect(getByText('1 Completed item')).toBeDefined();
+  await addAndComplete('item2');
+  expect(getByText('2 Completed items')).toBeDefined();
+});
+
+it("hides the number of completed items when there aren't any", () => {
+  const { completedItemsContainer } = renderUtil();
+
+  expect(completedItemsContainer).toHaveClass('hidden');
+});

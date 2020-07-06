@@ -88,3 +88,7 @@ li input[type='text'] {
   margin-top: 3px;
   opacity: 0.54;
 }
+
+.hidden {
+  display: none;
+}
