@@ -24,7 +24,6 @@ it('can add items', () => {
   };
 
   const expectedState = new Items([expectedItem]);
-  const state = Item.State;
   const result = appReducer(
     undefined,
     addItem({ text: expectedItem.text, id: expectedItem.id })
@@ -37,8 +36,6 @@ it('can complete active items', () => {
   const item = { text: 'buy things', id: 0 };
   const withItem = appReducer(undefined, addItem(item));
   const expectedState = new Items([{ ...item, state: Item.State.Completed }]);
-  const completed = Item.State.Completed;
-  const active = Item.State.Active;
 
   const afterCompleting = appReducer(withItem, completeItem(item.id));
 
