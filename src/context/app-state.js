@@ -6,7 +6,7 @@ import appReducer, {
   editItem,
 } from './app-reducer';
 
-export const AppStateContext = createContext(appReducer(undefined));
+export const AppStateContext = createContext();
 
 export const AppStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, appReducer());
