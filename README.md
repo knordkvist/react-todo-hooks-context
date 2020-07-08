@@ -6,3 +6,5 @@ The Context is hosting [a simple reducer](https://github.com/knordkvist/react-to
 Implemented using a test-driven approach with Jest and React Testing Library.
 
 Fancy fade-in effect of completed todo-items courtesy of React Transition Group, implemented using TransitionGroup in [this small wrapper component](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/components/CompletedItems.js#L7-L15).
+
+Use a combination of forwardRef and useImperativeHandle to focus newly created items as the user starts typing ([Item.js](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/components/Item.js))

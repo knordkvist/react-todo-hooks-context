@@ -7,7 +7,9 @@ export default function ItemList({ items, children, ItemWrapper }) {
       {ItemWrapper ? (
         <ItemWrapper
           items={items}
-          render={(item) => <Item item={item} />}
+          render={(item, props) => (
+            <Item item={item} key={item.id} {...props} />
+          )}
         ></ItemWrapper>
       ) : (
         items.map((item) => <Item item={item} key={item.id} />)
