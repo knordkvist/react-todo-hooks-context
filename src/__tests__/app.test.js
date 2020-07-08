@@ -64,7 +64,7 @@ it('automatically focuses the new item input', () => {
 });
 
 it('can complete active items', async () => {
-  const { addItem, completedItemsContainer, getByTestId } = renderUtil();
+  const { addItem, completedItemsContainer } = renderUtil();
   const text = 'do thing';
 
   const { addedCheckBox, itemId } = await addItem(text);
@@ -97,7 +97,7 @@ it('can uncheck completed items', async () => {
 });
 
 it('can edit active items', async () => {
-  const { addItem, getByDisplayValue } = renderUtil();
+  const { addItem } = renderUtil();
   const text = 'unedited';
   const { addedInput } = await addItem(text);
   const newText = 'i was edited';
