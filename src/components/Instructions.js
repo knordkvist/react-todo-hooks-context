@@ -7,7 +7,9 @@ const DismissButton = styled.button`
     right: 5%;
     background-color: #0078d7;
     border-color: #0078d7;
-    border: 2px solid black;
+    border: 1.5px solid black;
+    cursor: pointer;
+    border-radius: 3px;
     color: white;
     padding: 0.2rem 0.55rem;
     font-size: 1rem;
