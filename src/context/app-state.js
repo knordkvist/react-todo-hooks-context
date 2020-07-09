@@ -9,7 +9,7 @@ import appReducer, {
 export const AppStateContext = createContext();
 
 export const AppStateProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, appReducer());
+  const [todoItems, dispatch] = useReducer(appReducer, appReducer());
   const dispatchAddItem = (text) => dispatch(addItem({ text }));
   const dispatchCompleteItem = (itemId) => dispatch(completeItem(itemId));
   const dispatchUncheckItem = (itemId) => dispatch(uncheckItem(itemId));
@@ -20,7 +20,7 @@ export const AppStateProvider = ({ children }) => {
   return (
     <AppStateContext.Provider
       value={{
-        state,
+        todoItems,
         addItem: (text) => {
           dispatchAddItem(text);
           dismissInstructions();

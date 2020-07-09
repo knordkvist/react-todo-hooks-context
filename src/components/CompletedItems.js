@@ -16,7 +16,7 @@ const FadeIn = ({ items, render }) => (
 
 export default function CompletedItems() {
   const {
-    state: { completedItems },
+    todoItems: { completedItems },
   } = useContext(AppStateContext);
 
   return (
