@@ -10,11 +10,14 @@
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   font-size: 15px;
   background-color: darkslategray;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .check-list {
