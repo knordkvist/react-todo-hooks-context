@@ -125,3 +125,27 @@ it("hides the number of completed items when there aren't any", () => {
 
   expect(completedItemsContainer).toHaveClass('hidden');
 });
+
+describe('app instructions', () => {
+  it('is visible when the app is loaded', () => {
+    const { getByText } = renderUtil();
+
+    expect(getByText('Start typing to add a new item')).toBeDefined();
+    expect(getByText('Got it!')).toBeDefined();
+  });
+
+  it('can be dismissed by clicking the button', () => {
+    const { getByText, queryByTestId } = renderUtil();
+
+    fireEvent.click(getByText('Got it!'));
+
+    expect(queryByTestId('instructions-container')).toBeNull();
+  });
+
+  it('is automatically dismissed when an item is added', async () => {
+    const { addItem, queryByTestId } = renderUtil();
+
+    await addItem('a');
+    expect(queryByTestId('instructions-container')).toBeNull();
+  });
+});
