@@ -42,6 +42,12 @@ function renderUtil() {
   };
 }
 
+it('automatically focuses the new item input', () => {
+  const { newItemInput } = renderUtil();
+
+  expect(newItemInput).toHaveFocus();
+});
+
 it('adds an active todo when entering text', async () => {
   const { addItem, activeItemsContainer } = renderUtil();
   const text = 'buy milk';
@@ -60,12 +66,6 @@ it('clears the new item input after adding a new item', async () => {
   await addItem('a new item!');
 
   expect(newItemInput.value).toBe('');
-});
-
-it('automatically focuses the new item input', () => {
-  const { newItemInput } = renderUtil();
-
-  expect(newItemInput).toHaveFocus();
 });
 
 it('can complete active items', async () => {
@@ -112,23 +112,25 @@ it('can edit active items', async () => {
   expect(addedInput.value).toBe(newText);
 });
 
-it('shows the number of completed items', async () => {
-  const { addItem, getByText } = renderUtil();
-  const addAndComplete = async (text) => {
-    const { addedCheckBox } = await addItem(text);
-    fireEvent.click(addedCheckBox);
-  };
+describe('showing the number of completed items', () => {
+  it('shows the number of completed items', async () => {
+    const { addItem, getByText } = renderUtil();
+    const addAndComplete = async (text) => {
+      const { addedCheckBox } = await addItem(text);
+      fireEvent.click(addedCheckBox);
+    };
 
-  await addAndComplete('item1');
-  expect(getByText('1 Completed item')).toBeDefined();
-  await addAndComplete('item2');
-  expect(getByText('2 Completed items')).toBeDefined();
-});
+    await addAndComplete('item1');
+    expect(getByText('1 Completed item')).toBeDefined();
+    await addAndComplete('item2');
+    expect(getByText('2 Completed items')).toBeDefined();
+  });
 
-it("hides the number of completed items when there aren't any", () => {
-  const { completedItemsContainer } = renderUtil();
+  it("hides the number of completed items when there aren't any", () => {
+    const { completedItemsContainer } = renderUtil();
 
-  expect(completedItemsContainer).toHaveClass('hidden');
+    expect(completedItemsContainer).toHaveClass('hidden');
+  });
 });
 
 describe('app instructions', () => {
