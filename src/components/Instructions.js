@@ -20,10 +20,10 @@ const Container = styled.div`
   display: ${(props) => (props.visible ? 'flex' : 'none')};
   align-items: center;
   justify-content: space-around;
-  height: var(--instructions-height);
-  background-color: var(--background-color-secondary);
+  height: ${(props) => props.theme.instructionsHeight};
+  background-color: ${(props) => props.theme.backgroundColorSecondary};
   * {
-    background-color: var(--background-color-secondary);
+    background-color: ${(props) => props.theme.backgroundColorSecondary};
   }
   width: 100%;
   bottom: 0;

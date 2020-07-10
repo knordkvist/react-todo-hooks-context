@@ -13,10 +13,10 @@ const AppContainer = styled.div`
   max-width: 560px;
   margin-top: 30px;
   padding-bottom: ${(props) =>
-    props.instructionsVisible ? 'var(--instructions-height)' : false};
-  background-color: var(--background-color-primary);
+    props.instructionsVisible ? props.theme.instructionsHeight : false};
+  background-color: ${(props) => props.theme.backgroundColorPrimary};
   * {
-    background-color: var(--background-color-primary);
+    background-color: ${(props) => props.theme.backgroundColorPrimary};
   }
 `;
 
