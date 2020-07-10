@@ -13,8 +13,14 @@ function renderUtil() {
   const completedItemsContainer = getByTestId('completed-items-container');
   const activeItemsContainer = getByTestId('active-items-container');
   const addItem = async (text = '') => {
-    // The delay is useful for catching focus loss due to rerendering
-    await userEvent.type(newItemInput, text, { delay: 1 });
+    // Work around react-testing-library quirk by entering the first letter into the new item input ...
+    userEvent.type(newItemInput, text.substring(0, 1));
+    // and typing the rest into whatever element is focused (which should be a newly created todo-item)
+    // In this test environment the letter we first typed is lost, so we type the whole text including the first letter.
+    await userEvent.type(document.activeElement, text, {
+      // The delay is useful for catching focus loss, eg. due to rerendering
+      delay: 1,
+    });
 
     const addedInput = getByDisplayValue(text);
     const itemId = addedInput.dataset.itemId;
@@ -37,17 +43,16 @@ function renderUtil() {
 }
 
 it('adds an active todo when entering text', async () => {
-  const { addItem } = renderUtil();
+  const { addItem, activeItemsContainer } = renderUtil();
   const text = 'buy milk';
 
   const { addedCheckBox, addedInput } = await addItem(text);
 
   expect(addedCheckBox.checked).toBe(false);
   expect(addedInput.value).toBe(text);
-  //TODO: If userEvent.type worked like in a browser this assertion would pass, but right now it adds a one item per letter.
-  // expect(
-  //   activeItemsContainer.querySelectorAll('.check-list li.todo-item').length
-  // ).toBe(1);
+  expect(
+    activeItemsContainer.querySelectorAll('.check-list li.todo-item').length
+  ).toBe(1);
 });
 
 it('clears the new item input after adding a new item', async () => {
