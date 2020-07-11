@@ -17,12 +17,3 @@ body {
 .hidden {
   display: none;
 }
-
-.item-enter {
-  opacity: 0;
-}
-
-.item-enter.item-enter-active {
-  opacity: 1;
-  transition: 500ms ease-in;
-}

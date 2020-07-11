@@ -20,6 +20,15 @@ const Container = styled.div`
     text-decoration: line-through;
     color: gray;
   }
+
+  .item-enter {
+    opacity: 0;
+  }
+
+  .item-enter.item-enter-active {
+    opacity: 1;
+    transition: 500ms ease-in;
+  }
 `;
 
 const Separator = styled.div`
