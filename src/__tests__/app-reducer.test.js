@@ -1,10 +1,11 @@
-import appReducer, {
+import appReducer from '../context/app-reducer';
+import {
   addItem,
   completeItem,
   uncheckItem,
   editItem,
   splitItem,
-} from '../context/app-reducer';
+} from '../context/reducer-actions';
 import Item from '../context/Item';
 import Items from '../context/Items';
 

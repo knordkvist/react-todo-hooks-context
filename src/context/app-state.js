@@ -1,11 +1,13 @@
 import React, { createContext, useReducer, useState } from 'react';
-import appReducer, {
+
+import appReducer from './app-reducer';
+import {
   addItem,
   completeItem,
   uncheckItem,
   editItem,
   splitItem,
-} from './app-reducer';
+} from './reducer-actions';
 
 export const AppStateContext = createContext();
 
