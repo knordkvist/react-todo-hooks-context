@@ -149,7 +149,7 @@ describe('pressing enter when editing an item', () => {
   });
 
   describe('completed items', () => {
-    it.only('does not split completed items', async () => {
+    it('does not split completed items', async () => {
       const { addItem, container, completedItemsContainer } = renderUtil();
       const text = 'completed';
 
@@ -178,9 +178,8 @@ describe('showing the number of completed items', () => {
     };
 
     await addAndComplete('item1');
-    await addAndComplete('item2');
-
     expect(getByText('1 Completed item')).toBeDefined();
+    await addAndComplete('item2');
     expect(getByText('2 Completed items')).toBeDefined();
   });
 
