@@ -90,8 +90,8 @@ it('can uncheck completed items', async () => {
   } = renderUtil();
   const text = 'something fun';
 
-  const { addedCheckBox, itemId } = await addItem(text);
-  fireEvent.click(addedCheckBox);
+  const { itemId, completeItem } = await addItem(text);
+  completeItem();
   const completedCheckBox = within(completedItemsContainer).getByTestId(itemId);
   fireEvent.click(completedCheckBox);
 
@@ -173,13 +173,14 @@ describe('showing the number of completed items', () => {
   it('shows the number of completed items', async () => {
     const { addItem, getByText } = renderUtil();
     const addAndComplete = async (text) => {
-      const { addedCheckBox } = await addItem(text);
-      fireEvent.click(addedCheckBox);
+      const { completeItem } = await addItem(text);
+      completeItem();
     };
 
     await addAndComplete('item1');
-    expect(getByText('1 Completed item')).toBeDefined();
     await addAndComplete('item2');
+
+    expect(getByText('1 Completed item')).toBeDefined();
     expect(getByText('2 Completed items')).toBeDefined();
   });
 
