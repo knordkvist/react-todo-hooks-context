@@ -8,6 +8,11 @@ import appReducer, {
 import Item from '../context/Item';
 import Items from '../context/Items';
 
+const chainActions = (initialState = appReducer(), ...actions) =>
+  actions.reduce((state, action) => {
+    return appReducer(state, action);
+  }, initialState);
+
 // This is a useful feature of reducers: if we decide to use Redux later,
 // it will call each reducer with no state to produce the initial state for the store.
 // This also makes it very easy to produce the initial state for unit testing
@@ -35,22 +40,26 @@ it('can add items', () => {
 
 it('can complete active items', () => {
   const item = { text: 'buy things', id: 0 };
-  const withItem = appReducer(undefined, addItem(item));
-  const expectedState = new Items([{ ...item, state: Item.State.Completed }]);
+  const withCompletedItem = new Items([
+    { ...item, state: Item.State.Completed },
+  ]);
 
-  const afterCompleting = appReducer(withItem, completeItem(item.id));
+  const state = chainActions(undefined, addItem(item), completeItem(item.id));
 
-  expect(afterCompleting).toEqual(expectedState);
+  expect(state).toEqual(withCompletedItem);
 });
 
 it('can uncheck completed items', () => {
   const item = { text: 'do stuff', id: 0 };
   const withAddedItem = appReducer(undefined, addItem(item));
-  const withCompletedItem = appReducer(withAddedItem, completeItem(item.id));
 
-  const withUncheckedItem = appReducer(withCompletedItem, uncheckItem(item.id));
+  const state = chainActions(
+    withAddedItem,
+    completeItem(item.id),
+    uncheckItem(item.id)
+  );
 
-  expect(withUncheckedItem).toEqual(withAddedItem);
+  expect(state).toEqual(withAddedItem);
 });
 
 it('can edit active items', () => {
@@ -60,7 +69,11 @@ it('can edit active items', () => {
     addItem({ ...item, text: 'edited' })
   );
 
-  const edited = appReducer(new Items([item]), editItem(item.id, 'edited'));
+  const edited = chainActions(
+    undefined,
+    addItem(item),
+    editItem(item.id, 'edited')
+  );
 
   expect(edited).toEqual(expectedState);
 });
@@ -69,18 +82,20 @@ it('can split an item in two', () => {
   const fragment1 = 'split';
   const fragment2 = 'me';
   const item = { text: fragment1 + fragment2, id: 0 };
+  const newItem = { text: fragment2, id: 2 };
   const otherItem = { text: 'other', id: 1 };
-  const initialState = appReducer(
-    appReducer(undefined, addItem(item)),
-    addItem(otherItem)
-  );
   const expectedState = new Items([
     { text: fragment1, id: item.id },
-    { text: fragment2, id: 2 },
+    newItem,
     otherItem,
   ]);
 
-  const reducer = appReducer(initialState, splitItem(0, fragment1.length, 2));
+  const state = chainActions(
+    undefined,
+    addItem(item),
+    addItem(otherItem),
+    splitItem(item.id, fragment1.length, newItem.id)
+  );
 
-  expect(reducer).toEqual(expectedState);
+  expect(state).toEqual(expectedState);
 });
