@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import styled from 'styled-components';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import ItemList from './ItemList';
 import classNames from 'classnames';
@@ -14,24 +15,50 @@ const FadeIn = ({ items, render }) => (
   </TransitionGroup>
 );
 
+const Container = styled.div`
+  ul.check-list .item-text-input {
+    text-decoration: line-through;
+    color: gray;
+  }
+`;
+
+const Separator = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: gray;
+  ::before,
+  ::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid gray;
+  }
+  ::before {
+    margin-right: 0.25em;
+  }
+  ::after {
+    margin-left: 0.25em;
+  }
+`;
+
 export default function CompletedItems() {
   const {
     todoItems: { completedItems },
   } = useContext(AppStateContext);
 
   return (
-    <div
+    <Container
       data-testid="completed-items-container"
       className={classNames('completed-items-container', {
         hidden: completedItems.length < 1,
       })}
     >
-      <div className="separator">
+      <Separator>
         {completedItems.length} Completed{' '}
         {completedItems.length > 1 ? 'items' : 'item'}
-      </div>
+      </Separator>
 
       <ItemList items={completedItems} ItemWrapper={FadeIn} />
-    </div>
+    </Container>
   );
 }

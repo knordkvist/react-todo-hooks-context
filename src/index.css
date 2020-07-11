@@ -14,30 +14,6 @@ body {
   flex-direction: column;
 }
 
-.completed-items-container ul.check-list .item-text-input {
-  text-decoration: line-through;
-  color: gray;
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: gray;
-}
-.separator::before,
-.separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid gray;
-}
-.separator::before {
-  margin-right: 0.25em;
-}
-.separator::after {
-  margin-left: 0.25em;
-}
-
 .item-add-img {
   background: url(data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjE4cHgiIHdpZHRoPSIxOHB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0iIzAwMDAwMCI+CiA8cGF0aCBkPSJtMzggMjZoLTEydjEyaC00di0xMmgtMTJ2LTRoMTJ2LTEyaDR2MTJoMTJ2NHoiLz4KIDxwYXRoIGQ9Im0wIDBoNDh2NDhoLTQ4eiIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K)
     no-repeat center;
