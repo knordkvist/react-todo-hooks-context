@@ -1,9 +1,42 @@
 import React from 'react';
+import styled from 'styled-components';
 import Item from './Item';
+
+const CheckList = styled.ul`
+  list-style-type: none;
+  padding-left: 16px;
+
+  li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  li input {
+    border: 0;
+    font-size: 1rem;
+  }
+
+  li input:focus {
+    outline: none;
+  }
+
+  li label {
+    display: flex;
+    align-items: center;
+  }
+
+  li input[type='checkbox'] {
+    flex: none;
+  }
+
+  li input[type='text'] {
+    margin-left: 12px;
+  }
+`;
 
 export default function ItemList({ items, children, ItemWrapper }) {
   return (
-    <ul className="check-list">
+    <CheckList className="check-list">
       {ItemWrapper ? (
         <ItemWrapper
           items={items}
@@ -15,6 +48,6 @@ export default function ItemList({ items, children, ItemWrapper }) {
         items.map((item) => <Item item={item} key={item.id} />)
       )}
       {children}
-    </ul>
+    </CheckList>
   );
 }
