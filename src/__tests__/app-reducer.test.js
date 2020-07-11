@@ -3,6 +3,7 @@ import appReducer, {
   completeItem,
   uncheckItem,
   editItem,
+  splitItem,
 } from '../context/app-reducer';
 import Item from '../context/Item';
 import Items from '../context/Items';
@@ -62,4 +63,24 @@ it('can edit active items', () => {
   const edited = appReducer(new Items([item]), editItem(item.id, 'edited'));
 
   expect(edited).toEqual(expectedState);
+});
+
+it('can split an item in two', () => {
+  const fragment1 = 'split';
+  const fragment2 = 'me';
+  const item = { text: fragment1 + fragment2, id: 0 };
+  const otherItem = { text: 'other', id: 1 };
+  const initialState = appReducer(
+    appReducer(undefined, addItem(item)),
+    addItem(otherItem)
+  );
+  const expectedState = new Items([
+    { text: fragment1, id: item.id },
+    { text: fragment2, id: 2 },
+    otherItem,
+  ]);
+
+  const reducer = appReducer(initialState, splitItem(0, fragment1.length, 2));
+
+  expect(reducer).toEqual(expectedState);
 });
