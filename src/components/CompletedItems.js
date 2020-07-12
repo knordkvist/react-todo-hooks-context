@@ -5,16 +5,6 @@ import ItemList from './ItemList';
 import classNames from 'classnames';
 import { AppStateContext } from '../context/app-state';
 
-const FadeIn = ({ items, render }) => (
-  <TransitionGroup component={null}>
-    {items.map((item) => (
-      <CSSTransition key={item.id} timeout={500} exit={false} classNames="item">
-        {render(item)}
-      </CSSTransition>
-    ))}
-  </TransitionGroup>
-);
-
 const Container = styled.div`
   ul.check-list .item-text-input {
     text-decoration: line-through;
@@ -50,6 +40,16 @@ const Separator = styled.div`
   }
 `;
 
+const FadeIn = ({ items, render }) => (
+  <TransitionGroup component={null}>
+    {items.map((item) => (
+      <CSSTransition key={item.id} timeout={500} exit={false} classNames="item">
+        {render(item)}
+      </CSSTransition>
+    ))}
+  </TransitionGroup>
+);
+
 export default function CompletedItems() {
   const {
     todoItems: { completedItems },
@@ -67,7 +67,7 @@ export default function CompletedItems() {
         {completedItems.length > 1 ? 'items' : 'item'}
       </Separator>
 
-      <ItemList items={completedItems} ItemWrapper={FadeIn} />
+      <ItemList items={[...completedItems].reverse()} ItemWrapper={FadeIn} />
     </Container>
   );
 }
