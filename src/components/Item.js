@@ -57,6 +57,7 @@ function Item({ item }, ref) {
       <input
         className="item-text-input"
         type="text"
+        readOnly={item.state === ItemState.Completed}
         value={item.text}
         ref={textInputRef}
         data-item-id={item.id}
