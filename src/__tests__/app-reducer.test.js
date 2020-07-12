@@ -9,7 +9,9 @@ import {
 import Item from '../context/Item';
 import Items from '../context/Items';
 
-const chainActions = (initialState = appReducer(), ...actions) =>
+const chainActions = (...actions) =>
+  chainActionsWithState(undefined, ...actions);
+const chainActionsWithState = (initialState = appReducer(), ...actions) =>
   actions.reduce((state, action) => {
     return appReducer(state, action);
   }, initialState);
@@ -45,7 +47,7 @@ it('can complete active items', () => {
     { ...item, state: Item.State.Completed },
   ]);
 
-  const state = chainActions(undefined, addItem(item), completeItem(item.id));
+  const state = chainActions(addItem(item), completeItem(item.id));
 
   expect(state).toEqual(withCompletedItem);
 });
@@ -54,7 +56,7 @@ it('can uncheck completed items', () => {
   const item = { text: 'do stuff', id: 0 };
   const withAddedItem = appReducer(undefined, addItem(item));
 
-  const state = chainActions(
+  const state = chainActionsWithState(
     withAddedItem,
     completeItem(item.id),
     uncheckItem(item.id)
@@ -70,11 +72,7 @@ it('can edit active items', () => {
     addItem({ ...item, text: 'edited' })
   );
 
-  const edited = chainActions(
-    undefined,
-    addItem(item),
-    editItem(item.id, 'edited')
-  );
+  const edited = chainActions(addItem(item), editItem(item.id, 'edited'));
 
   expect(edited).toEqual(expectedState);
 });
@@ -92,7 +90,6 @@ it('can split an item in two', () => {
   ]);
 
   const state = chainActions(
-    undefined,
     addItem(item),
     addItem(otherItem),
     splitItem(item.id, fragment1.length, newItem.id)
