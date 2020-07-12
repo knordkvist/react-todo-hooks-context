@@ -7,6 +7,7 @@ const CheckList = styled.ul`
   padding-left: 16px;
 
   li {
+    display: flex;
     margin-top: 5px;
     margin-bottom: 5px;
   }
@@ -31,6 +32,7 @@ const CheckList = styled.ul`
 
   li input[type='text'] {
     margin-left: 12px;
+    flex: 1;
   }
 `;
 
