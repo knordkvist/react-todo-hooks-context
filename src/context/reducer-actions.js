@@ -36,3 +36,9 @@ export const splitItem = (itemId, splitAt, newItemId = nextId()) => ({
   payload: { id: itemId, splitAt, newItemId },
 });
 splitItem.type = 'app-state/splitItem';
+
+export const mergeItem = (itemId) => ({
+  type: mergeItem.type,
+  payload: { id: itemId },
+});
+mergeItem.type = 'app-state/mergeItem';

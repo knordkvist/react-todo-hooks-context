@@ -7,6 +7,7 @@ import {
   uncheckItem,
   editItem,
   splitItem,
+  mergeItem,
 } from './reducer-actions';
 
 export const AppStateContext = createContext();
@@ -14,11 +15,14 @@ export const AppStateContext = createContext();
 export const EventType = {
   ItemAdded: 'itemAdded',
   ItemSplit: 'itemSplit',
+  ItemMerged: 'itemMerged',
 };
 
 export const AppStateProvider = ({ children }) => {
   const [todoItems, dispatch] = useReducer(appReducer, appReducer());
   const [latestEvent, setLatestEvent] = useState(null);
+  const sendEvent = (eventType, data) =>
+    setLatestEvent({ type: eventType, data });
   const [instructionsVisible, setInstructionsVisible] = useState(true);
   const dismissInstructions = () => setInstructionsVisible(false);
 
@@ -55,6 +59,17 @@ export const AppStateProvider = ({ children }) => {
               newItemId: action.payload.newItemId,
             },
           });
+        },
+        mergeItem: (itemId) => {
+          const removedItemIndex = todoItems.items.findIndex(
+            (item) => item.id === itemId
+          );
+
+          if (removedItemIndex === 0) return;
+
+          dispatch(mergeItem(itemId));
+          const mergedIntoItem = todoItems.items[removedItemIndex - 1];
+          sendEvent(EventType.ItemMerged, { mergedIntoItem });
         },
         instructionsVisible,
         dismissInstructions,

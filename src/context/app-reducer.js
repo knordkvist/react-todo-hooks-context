@@ -8,6 +8,7 @@ import {
   uncheckItem,
   editItem,
   splitItem,
+  mergeItem,
 } from './reducer-actions';
 
 export default produce((draft, { type, payload = {} } = {}) => {
@@ -41,6 +42,15 @@ export default produce((draft, { type, payload = {} } = {}) => {
           id: payload.newItemId,
         })
       );
+      return;
+    }
+    case mergeItem.type: {
+      const itemIndex = draft.items.indexOf(item);
+      if (itemIndex === 0) return;
+
+      draft.items.splice(itemIndex, 1);
+      const prevItem = draft.items[itemIndex - 1];
+      prevItem.text += item.text;
       return;
     }
     default:

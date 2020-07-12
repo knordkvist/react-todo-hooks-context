@@ -13,10 +13,6 @@ function Focusable({ items, render }) {
   useEffect(() => {
     if (!latestEvent) return;
     const { type: eventType, data: eventData } = latestEvent;
-    if (
-      !(eventType === EventType.ItemAdded || eventType === EventType.ItemSplit)
-    )
-      return;
 
     // The item was created by typing text into the new item input, keep caret at end of text
     if (eventType === EventType.ItemAdded) {
@@ -27,6 +23,13 @@ function Focusable({ items, render }) {
     if (eventType === EventType.ItemSplit) {
       const itemRef = itemRefs.current[eventData.newItemId];
       itemRef.focusTextInput(0);
+    }
+
+    // Two items were merged into one, focus the item
+    if (eventType === EventType.ItemMerged) {
+      const item = eventData.mergedIntoItem;
+      const itemRef = itemRefs.current[item.id];
+      itemRef.focusTextInput(item.text.length);
     }
   }, [latestEvent]);
 

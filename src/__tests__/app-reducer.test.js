@@ -5,6 +5,7 @@ import {
   uncheckItem,
   editItem,
   splitItem,
+  mergeItem,
 } from '../context/reducer-actions';
 import Item from '../context/Item';
 import Items from '../context/Items';
@@ -96,4 +97,32 @@ it('can split an item in two', () => {
   );
 
   expect(state).toEqual(expectedState);
+});
+
+describe('merging items', () => {
+  it('merges the specified item with the one before it', () => {
+    const item1 = { text: 'item1', id: 0 };
+    const item2 = { text: 'item2', id: 1 };
+    const expectedState = appReducer(
+      undefined,
+      addItem({ text: item1.text + item2.text, id: item1.id })
+    );
+
+    const state = chainActions(
+      addItem(item1),
+      addItem(item2),
+      mergeItem(item2.id)
+    );
+
+    expect(state).toEqual(expectedState);
+  });
+
+  it('does nothing if the item is the first one', () => {
+    const item1 = { text: 'item1', id: 0 };
+    const expected = chainActions(addItem(item1), addItem({ text: 'item2' }));
+
+    const split = chainActionsWithState(expected, mergeItem(item1.id));
+
+    expect(expected).toEqual(split);
+  });
 });

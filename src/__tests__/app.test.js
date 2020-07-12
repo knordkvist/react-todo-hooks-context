@@ -169,6 +169,43 @@ describe('pressing enter when editing an item', () => {
   });
 });
 
+describe('merging items', () => {
+  it('can merge an item into the one before it', async () => {
+    const { addItem, getByDisplayValue, queryByDisplayValue } = renderUtil();
+    const item1Text = 'item1';
+    const item2Text = 'item2';
+
+    await addItem(item1Text);
+    const { addedInput: item2Input } = await addItem(item2Text);
+    item2Input.selectionStart = 0;
+    fireEvent.keyDown(item2Input, { key: 'Backspace' });
+
+    expect(queryByDisplayValue(item1Text)).not.toBeInTheDocument();
+    expect(queryByDisplayValue(item2Text)).not.toBeInTheDocument();
+    const mergedInto = getByDisplayValue(item1Text + item2Text);
+    expect(mergedInto).toBeInTheDocument();
+    expect(mergedInto).toHaveFocus();
+    expect(mergedInto.selectionStart).toBe(item1Text.length);
+    expect(mergedInto.selectionEnd).toBe(item1Text.length);
+  });
+
+  it('does nothing if there is no item before it', async () => {
+    const { addItem, queryByDisplayValue } = renderUtil();
+    const item1Text = 'item1';
+    const item2Text = 'item2';
+
+    const { addedInput: item1Input } = await addItem(item1Text);
+    await addItem(item2Text);
+    item1Input.focus();
+    item1Input.selectionStart = 0;
+    fireEvent.keyDown(item1Input, { key: 'Backspace' });
+
+    expect(queryByDisplayValue(item1Text)).toBeInTheDocument();
+    expect(queryByDisplayValue(item2Text)).toBeInTheDocument();
+    expect(item1Input).toHaveFocus();
+  });
+});
+
 describe('showing the number of completed items', () => {
   it('shows the number of completed items', async () => {
     const { addItem, getByText } = renderUtil();

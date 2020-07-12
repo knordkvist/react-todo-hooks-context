@@ -9,9 +9,13 @@ import { AppStateContext } from '../context/app-state';
 const ItemState = ContextItem.State;
 
 function Item({ item }, ref) {
-  const { completeItem, uncheckItem, editItem, splitItem } = useContext(
-    AppStateContext
-  );
+  const {
+    completeItem,
+    uncheckItem,
+    editItem,
+    splitItem,
+    mergeItem,
+  } = useContext(AppStateContext);
   const textInputRef = useRef();
   const focusTextInput = (caretAt) => {
     textInputRef.current.focus();
@@ -21,10 +25,21 @@ function Item({ item }, ref) {
   useImperativeHandle(ref, () => ({ focusTextInput }));
 
   const onKeyDown = (event) => {
-    if (event.key !== 'Enter' || item.state === ItemState.Completed) return;
+    if (item.state === ItemState.Completed) return;
 
-    const selectionStart = event.target.selectionStart;
-    splitItem(item.id, selectionStart);
+    switch (event.key) {
+      case 'Enter': {
+        splitItem(item.id, event.target.selectionStart);
+        return;
+      }
+      case 'Backspace': {
+        if (event.target.selectionStart > 0) return;
+        mergeItem(item.id);
+        return;
+      }
+      default:
+        return;
+    }
   };
 
   return (
