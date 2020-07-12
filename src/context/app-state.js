@@ -37,12 +37,9 @@ export const AppStateProvider = ({ children }) => {
         addItem: (text) => {
           const action = addItem({ text });
           dispatch(action);
-          setLatestEvent({
-            type: EventType.ItemAdded,
-            data: {
-              itemId: action.payload.id,
-              text,
-            },
+          sendEvent(EventType.ItemAdded, {
+            itemId: action.payload.id,
+            text,
           });
           dismissInstructions();
         },
@@ -52,12 +49,9 @@ export const AppStateProvider = ({ children }) => {
         splitItem: (itemId, splitAt) => {
           const action = splitItem(itemId, splitAt);
           dispatch(action);
-          setLatestEvent({
-            type: EventType.ItemSplit,
-            data: {
-              splitItemId: itemId,
-              newItemId: action.payload.newItemId,
-            },
+          sendEvent(EventType.ItemSplit, {
+            splitItemId: itemId,
+            newItemId: action.payload.newItemId,
           });
         },
         mergeItem: (itemId) => {
