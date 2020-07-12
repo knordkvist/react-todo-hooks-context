@@ -12,24 +12,30 @@ function Focusable({ items, render }) {
   // When a new item is added, focus that specific input
   useEffect(() => {
     if (!latestEvent) return;
+
     const { type: eventType, data: eventData } = latestEvent;
-
-    // The item was created by typing text into the new item input, keep caret at end of text
-    if (eventType === EventType.ItemAdded) {
-      const itemRef = itemRefs.current[eventData.itemId];
-      itemRef.focusTextInput(eventData.text.length);
-    }
-    // The item was added by splitting an existing item so we want to focus the start of the input, where the user left off
-    if (eventType === EventType.ItemSplit) {
-      const itemRef = itemRefs.current[eventData.newItemId];
-      itemRef.focusTextInput(0);
-    }
-
-    // Two items were merged into one, focus the item
-    if (eventType === EventType.ItemMerged) {
-      const item = eventData.mergedIntoItem;
-      const itemRef = itemRefs.current[item.id];
-      itemRef.focusTextInput(item.text.length);
+    switch (eventType) {
+      case EventType.ItemAdded: {
+        const itemRef = itemRefs.current[eventData.itemId];
+        // The item was created by typing text into the new item input, move caret to end of text
+        itemRef.focusTextInput(eventData.text.length);
+        break;
+      }
+      case EventType.ItemSplit: {
+        const itemRef = itemRefs.current[eventData.newItemId];
+        // The item was added by splitting an existing item so we want to focus the start of the input, where the user left off
+        itemRef.focusTextInput(0);
+        break;
+      }
+      case EventType.ItemMerged: {
+        const item = eventData.mergedIntoItem;
+        const itemRef = itemRefs.current[item.id];
+        // Two items were merged into one, set caret between the two texts
+        itemRef.focusTextInput(item.text.length);
+        break;
+      }
+      default:
+        break;
     }
   }, [latestEvent]);
 
