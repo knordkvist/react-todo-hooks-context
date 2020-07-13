@@ -43,11 +43,11 @@ function Item({ item }, ref) {
   };
 
   return (
-    <li className="todo-item">
+    <li className="todo-item" data-testid={item.id}>
       <input
         type="checkbox"
-        checked={item.state === ItemState.Completed}
-        data-testid={item.id}
+        checked={item.state === ItemState.Completed ? true : undefined}
+        aria-label={'Toggle todo'}
         onChange={() =>
           item.state === ItemState.Completed
             ? uncheckItem(item.id)

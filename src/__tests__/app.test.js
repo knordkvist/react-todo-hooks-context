@@ -7,29 +7,26 @@ import App from '../app';
 
 function renderUtil() {
   const renderResult = render(<App />);
-  const { getByDisplayValue, getByTestId } = renderResult;
-
   const newItemInput = renderResult.getByPlaceholderText('todo...');
-  const completedItemsContainer = getByTestId('completed-items-container');
-  const activeItemsContainer = getByTestId('active-items-container');
+
   const addItem = async (text = '') => {
     await userEvent.type(newItemInput, text, {
       // The delay is useful for catching focus loss, eg. due to erroneous rerendering
       delay: 1,
     });
 
-    const addedInput = getByDisplayValue(text);
+    const addedInput = renderResult.getByDisplayValue(text);
     const itemId = addedInput.dataset.itemId;
-    const addedCheckBox = getByTestId(itemId);
-    const completeItem = () => fireEvent.click(addedCheckBox);
 
     return {
-      get addedInput() {
-        return getByDisplayValue(text);
-      },
+      addedInput,
       itemId,
-      addedCheckBox,
-      completeItem,
+      get itemContainer() {
+        return renderResult.getByTestId(itemId);
+      },
+      get toggleCheckbox() {
+        return within(this.itemContainer).getByLabelText('Toggle todo');
+      },
     };
   };
 
@@ -37,8 +34,18 @@ function renderUtil() {
     ...renderResult,
     newItemInput,
     addItem,
-    completedItemsContainer,
-    activeItemsContainer,
+    get completedItemsContainer() {
+      return renderResult.getByTestId('completed-items-container');
+    },
+    get activeItemsContainer() {
+      return renderResult.getByTestId('active-items-container');
+    },
+    get todoItems() {
+      return document.querySelectorAll('.check-list li.todo-item');
+    },
+    get instructionsContainer() {
+      return renderResult.queryByTestId('instructions-container');
+    },
   };
 }
 
@@ -52,53 +59,43 @@ it('adds an active todo when entering text', async () => {
   const { addItem, activeItemsContainer } = renderUtil();
   const text = 'buy milk';
 
-  const { addedCheckBox, addedInput } = await addItem(text);
+  const { toggleCheckbox, addedInput, itemContainer } = await addItem(text);
 
-  expect(addedCheckBox.checked).toBe(false);
-  expect(addedInput.value).toBe(text);
-  expect(
-    activeItemsContainer.querySelectorAll('.check-list li.todo-item').length
-  ).toBe(1);
+  expect(toggleCheckbox).not.toBeChecked();
+  expect(addedInput).toHaveValue(text);
+  expect(activeItemsContainer).toContainElement(itemContainer);
+  expect(activeItemsContainer.querySelectorAll('li.todo-item')).toHaveLength(1);
 });
 
 it('clears the new item input after adding a new item', async () => {
   const { addItem, newItemInput } = renderUtil();
+
   await addItem('a new item!');
 
-  expect(newItemInput.value).toBe('');
+  expect(newItemInput).toHaveValue('');
 });
 
 it('can complete active items', async () => {
   const { addItem, completedItemsContainer } = renderUtil();
   const text = 'do thing';
 
-  const { addedCheckBox, itemId } = await addItem(text);
-  fireEvent.click(addedCheckBox);
+  const addItemRes = await addItem(text);
+  fireEvent.click(addItemRes.toggleCheckbox);
 
-  // Make sure input and checkbox has moved to the 'completed items' section
-  const checkBox = within(completedItemsContainer).getByTestId(itemId);
-  const input = within(completedItemsContainer).getByDisplayValue(text);
-  expect(checkBox.checked).toBe(true);
-  expect(input).toBeDefined();
+  expect(completedItemsContainer).toContainElement(addItemRes.itemContainer);
+  expect(addItemRes.toggleCheckbox).toBeChecked();
 });
 
 it('can uncheck completed items', async () => {
-  const {
-    addItem,
-    completedItemsContainer,
-    activeItemsContainer,
-  } = renderUtil();
+  const { addItem, activeItemsContainer } = renderUtil();
   const text = 'something fun';
 
-  const { itemId, completeItem } = await addItem(text);
-  completeItem();
-  const completedCheckBox = within(completedItemsContainer).getByTestId(itemId);
-  fireEvent.click(completedCheckBox);
+  const addItemRes = await addItem(text);
+  fireEvent.click(addItemRes.toggleCheckbox);
+  fireEvent.click(addItemRes.toggleCheckbox);
 
-  const uncheckedCheckBox = within(activeItemsContainer).getByTestId(itemId);
-  const input = within(activeItemsContainer).getByDisplayValue(text);
-  expect(uncheckedCheckBox.checked).toBe(false);
-  expect(input).toBeDefined();
+  expect(activeItemsContainer).toContainElement(addItemRes.itemContainer);
+  expect(addItemRes.toggleCheckbox).not.toBeChecked();
 });
 
 it('can edit active items', async () => {
@@ -116,22 +113,22 @@ it('can edit active items', async () => {
 describe('pressing enter when editing an item', () => {
   describe('active items', () => {
     it('creates and focuses a new empty item when there is no text to the right of the caret', async () => {
-      const { addItem, getByDisplayValue, container } = renderUtil();
+      const renderUtilRes = renderUtil();
+      const { addItem, getByDisplayValue } = renderUtilRes;
 
-      const { addedInput } = await addItem('item1');
-      fireEvent.keyDown(addedInput, { key: 'Enter' });
-      expect(document.activeElement.value).toBe('');
+      const addItemRes = await addItem('item1');
+      userEvent.type(addItemRes.addedInput, '{Enter}');
+      fireEvent.keyDown(addItemRes.addedInput, { key: 'Enter' });
       await userEvent.type(document.activeElement, 'item2', { delay: 1 });
-
       const item2Input = getByDisplayValue('item2');
+
       expect(item2Input).toHaveFocus();
-      expect(
-        container.querySelectorAll('.check-list li.todo-item').length
-      ).toBe(2);
+      expect(renderUtilRes.todoItems).toHaveLength(2);
     });
 
     it('creates a new item containing the text to the right of the caret', async () => {
-      const { addItem, getByDisplayValue, container } = renderUtil();
+      const renderResult = renderUtil();
+      const { addItem, getByDisplayValue } = renderResult;
       const text1 = 'split';
       const text2 = 'item';
 
@@ -142,29 +139,25 @@ describe('pressing enter when editing an item', () => {
 
       expect(getByDisplayValue(text1)).toBeInTheDocument();
       expect(getByDisplayValue(text2)).toBeInTheDocument();
-      expect(
-        container.querySelectorAll('.check-list li.todo-item').length
-      ).toBe(2);
+      expect(renderResult.todoItems).toHaveLength(2);
     });
   });
 
   describe('completed items', () => {
     it('does not split completed items', async () => {
-      const { addItem, container, completedItemsContainer } = renderUtil();
+      const renderResult = renderUtil();
+      const { addItem, completedItemsContainer } = renderResult;
       const text = 'completed';
 
-      const { completeItem } = await addItem(text);
-      completeItem();
-      const input = within(completedItemsContainer).getByDisplayValue(text);
-      input.selectionStart = 2;
-      fireEvent.keyDown(input, { key: 'Enter' });
+      const addItemRes = await addItem(text);
+      userEvent.click(addItemRes.toggleCheckbox);
+      addItemRes.addedInput.selectionStart = 2;
+      fireEvent.keyDown(addItemRes.addedInput, { key: 'Enter' });
 
-      expect(
-        within(completedItemsContainer).getByDisplayValue(text)
-      ).toBeDefined();
-      expect(
-        container.querySelectorAll('.check-list li.todo-item').length
-      ).toBe(1);
+      expect(completedItemsContainer).toContainElement(
+        addItemRes.itemContainer
+      );
+      expect(renderResult.todoItems).toHaveLength(1);
     });
   });
 });
@@ -210,8 +203,8 @@ describe('showing the number of completed items', () => {
   it('shows the number of completed items', async () => {
     const { addItem, getByText } = renderUtil();
     const addAndComplete = async (text) => {
-      const { completeItem } = await addItem(text);
-      completeItem();
+      const { toggleCheckbox } = await addItem(text);
+      userEvent.click(toggleCheckbox);
     };
 
     await addAndComplete('item1');
@@ -236,11 +229,13 @@ describe('app instructions', () => {
   });
 
   it('can be dismissed by clicking the button', () => {
-    const { getByText, queryByTestId } = renderUtil();
+    const renderResult = renderUtil();
 
-    fireEvent.click(getByText('Got it!'));
+    fireEvent.click(
+      within(renderResult.instructionsContainer).getByText('Got it!')
+    );
 
-    expect(queryByTestId('instructions-container')).toBeNull();
+    expect(renderResult.instructionsContainer).toBeNull();
   });
 
   it('is automatically dismissed when an item is added', async () => {
