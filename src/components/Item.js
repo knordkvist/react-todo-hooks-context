@@ -1,14 +1,10 @@
-import React, {
-  useContext,
-  useRef,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
+import React, { useContext } from 'react';
 import ContextItem from '../context/Item';
 import { AppStateContext } from '../context/app-state';
+import { useFocusable } from '../interactions/focusable';
 const ItemState = ContextItem.State;
 
-function Item({ item }, ref) {
+export default function Item({ item }) {
   const {
     completeItem,
     uncheckItem,
@@ -16,13 +12,7 @@ function Item({ item }, ref) {
     splitItem,
     mergeItem,
   } = useContext(AppStateContext);
-  const textInputRef = useRef();
-  const focusTextInput = (caretAt) => {
-    textInputRef.current.focus();
-    textInputRef.current.setSelectionRange(caretAt, caretAt);
-  };
-  // Expose an object containing our focusTextInput method
-  useImperativeHandle(ref, () => ({ focusTextInput }));
+  const focusable = useFocusable(item.id);
 
   const onKeyDown = (event) => {
     if (item.state === ItemState.Completed) return;
@@ -59,7 +49,7 @@ function Item({ item }, ref) {
         type="text"
         readOnly={item.state === ItemState.Completed}
         value={item.text}
-        ref={textInputRef}
+        ref={focusable}
         data-item-id={item.id}
         onChange={(e) => editItem(item.id, e.target.value)}
         onKeyDown={onKeyDown}
@@ -67,5 +57,3 @@ function Item({ item }, ref) {
     </li>
   );
 }
-
-export default forwardRef(Item);

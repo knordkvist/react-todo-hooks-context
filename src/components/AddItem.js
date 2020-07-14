@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { AppStateContext } from '../context/app-state';
+import { useFocusable } from '../interactions/focusable';
 
 const ListItem = styled.li`
   .item-add-img {
@@ -18,6 +19,7 @@ const ListItem = styled.li`
 
 export function AddItem() {
   const { addItem } = useContext(AppStateContext);
+  const focusable = useFocusable('addItem');
 
   return (
     <ListItem>
@@ -26,6 +28,7 @@ export function AddItem() {
         <input
           type="text"
           placeholder="todo..."
+          ref={focusable}
           value=""
           onChange={(event) => addItem(event.target.value)}
           autoFocus
