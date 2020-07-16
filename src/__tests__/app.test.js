@@ -1,51 +1,26 @@
 import React from 'react';
-import { render, fireEvent, getByLabelText } from 'test-utils';
+import { AppStateProvider } from '../context/app-state';
+import { render as renderUnbound, fireEvent } from 'test-utils';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import TodoList from '../components/TodoList';
-import { AppStateProvider } from '../context/app-state';
 import ActiveItems from '../components/ActiveItems';
 import CompletedItems from '../components/CompletedItems';
 import Instructions from '../components/Instructions';
 
-const renderUtil = (component, options = {}) => {
-  if (!component) throw new Error('No component supplied');
-
-  const addItem = async (renderResult, newItemInput, text = '') => {
-    await userEvent.type(newItemInput, text, {
-      // The delay is useful for catching focus loss, eg. due to erroneous rerendering
-      delay: 1,
-    });
-
-    const input = renderResult.getByDisplayValue(text);
-    const itemId = input.dataset.itemId;
-    const itemContainer = () => renderResult.getByTestId(itemId);
-
-    return {
-      addedInput: () => getByLabelText(itemContainer(), 'Todo description'),
-      itemId,
-      itemContainer,
-      toggleCheckbox() {
-        return getByLabelText(itemContainer(), 'Toggle todo');
-      },
-    };
-  };
-
-  const renderResult = render(component, AppStateProvider, options);
-  return {
-    ...renderResult,
-    addItem: (text) => addItem(renderResult, renderResult.newItemInput(), text),
-  };
-};
+const render = renderUnbound.bind(null, AppStateProvider);
 
 it('automatically focuses the new item input', () => {
-  const { newItemInput } = renderUtil(<TodoList />);
+  const { newItemInput } = render(<TodoList />);
 
   expect(newItemInput()).toHaveFocus();
 });
 
 it('adds an active todo when entering text', async () => {
-  const { addItem, activeItemsContainer } = renderUtil(<TodoList />);
+  const {
+    actions: { addItem },
+    activeItemsContainer,
+  } = render(<TodoList />);
   const text = 'buy milk';
 
   const { toggleCheckbox, addedInput, itemContainer } = await addItem(text);
@@ -59,7 +34,10 @@ it('adds an active todo when entering text', async () => {
 });
 
 it('clears the new item input after adding a new item', async () => {
-  const { addItem, newItemInput } = renderUtil(<ActiveItems />);
+  const {
+    actions: { addItem },
+    newItemInput,
+  } = render(<ActiveItems />);
 
   await addItem('a new item!');
 
@@ -67,7 +45,10 @@ it('clears the new item input after adding a new item', async () => {
 });
 
 it('can complete active items', async () => {
-  const { addItem, completedItemsContainer } = renderUtil(
+  const {
+    actions: { addItem },
+    completedItemsContainer,
+  } = render(
     <>
       <ActiveItems />
       <CompletedItems />
@@ -83,7 +64,10 @@ it('can complete active items', async () => {
 });
 
 it('can uncheck completed items', async () => {
-  const { addItem, activeItemsContainer } = renderUtil(
+  const {
+    actions: { addItem },
+    activeItemsContainer,
+  } = render(
     <>
       <ActiveItems />
       <CompletedItems />
@@ -102,7 +86,9 @@ it('can uncheck completed items', async () => {
 it('can edit active items', async () => {
   const text = 'unedited';
   const newText = 'i was edited';
-  const { addItem } = renderUtil(<ActiveItems />);
+  const {
+    actions: { addItem },
+  } = render(<ActiveItems />);
   const { addedInput } = await addItem(text);
 
   userEvent.type(addedInput(), '{backspace}'.repeat(text.length));
@@ -114,9 +100,11 @@ it('can edit active items', async () => {
 describe('pressing enter when editing an item', () => {
   describe('active items', () => {
     it('creates and focuses a new empty item when there is no text to the right of the caret', async () => {
-      const { addItem, getByDisplayValue, todoItems } = renderUtil(
-        <ActiveItems />
-      );
+      const {
+        actions: { addItem },
+        getByDisplayValue,
+        todoItems,
+      } = render(<ActiveItems />);
 
       const { addedInput } = await addItem('item1');
       userEvent.type(addedInput(), '{Enter}');
@@ -129,8 +117,12 @@ describe('pressing enter when editing an item', () => {
     });
 
     it('creates a new item containing the text to the right of the caret', async () => {
-      const renderResult = renderUtil(<ActiveItems />);
-      const { addItem, getByDisplayValue, todoItems } = renderResult;
+      const renderResult = render(<ActiveItems />);
+      const {
+        actions: { addItem },
+        getByDisplayValue,
+        todoItems,
+      } = renderResult;
       const text1 = 'split';
       const text2 = 'item';
 
@@ -147,7 +139,11 @@ describe('pressing enter when editing an item', () => {
 
   describe('completed items', () => {
     it('does not split completed items', async () => {
-      const { addItem, completedItemsContainer, todoItems } = renderUtil(
+      const {
+        actions: { addItem },
+        completedItemsContainer,
+        todoItems,
+      } = render(
         <>
           <ActiveItems />
           <CompletedItems />
@@ -168,7 +164,11 @@ describe('pressing enter when editing an item', () => {
 
 describe('merging items', () => {
   it('can merge an item into the one before it', async () => {
-    const { addItem, getByDisplayValue, queryByDisplayValue } = renderUtil(
+    const {
+      actions: { addItem },
+      getByDisplayValue,
+      queryByDisplayValue,
+    } = render(
       <>
         <ActiveItems />
         <CompletedItems />
@@ -192,7 +192,10 @@ describe('merging items', () => {
   });
 
   it('does nothing if there is no item before it', async () => {
-    const { addItem, queryByDisplayValue } = renderUtil(
+    const {
+      actions: { addItem },
+      queryByDisplayValue,
+    } = render(
       <>
         <ActiveItems />
         <CompletedItems />
@@ -215,7 +218,10 @@ describe('merging items', () => {
 
 describe('showing the number of completed items', () => {
   it('shows the number of completed items', async () => {
-    const { addItem, getByText } = renderUtil(
+    const {
+      actions: { addItem },
+      getByText,
+    } = render(
       <>
         <ActiveItems />
         <CompletedItems />
@@ -233,7 +239,7 @@ describe('showing the number of completed items', () => {
   });
 
   it("hides the number of completed items when there aren't any", () => {
-    const { completedItemsContainer } = renderUtil(<CompletedItems />);
+    const { completedItemsContainer } = render(<CompletedItems />);
 
     expect(completedItemsContainer()).toHaveClass('hidden');
   });
@@ -241,14 +247,14 @@ describe('showing the number of completed items', () => {
 
 describe('app instructions', () => {
   it('is visible when the app is loaded', () => {
-    const { getByText } = renderUtil(<Instructions />);
+    const { getByText } = render(<Instructions />);
 
     expect(getByText('Start typing to add a new item')).toBeDefined();
     expect(getByText('Got it!')).toBeDefined();
   });
 
   it('can be dismissed by clicking the button', () => {
-    const { instructionsContainer, getByText } = renderUtil(<Instructions />);
+    const { instructionsContainer, getByText } = render(<Instructions />);
 
     const dismissButton = getByText('Got it!');
     fireEvent.click(dismissButton);
@@ -257,7 +263,10 @@ describe('app instructions', () => {
   });
 
   it('is automatically dismissed when an item is added', async () => {
-    const { addItem, instructionsContainer } = renderUtil(
+    const {
+      actions: { addItem },
+      instructionsContainer,
+    } = render(
       <>
         <ActiveItems />
         <Instructions />
