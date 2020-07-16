@@ -3,6 +3,7 @@ import React, { createContext, useReducer, useState } from 'react';
 import appReducer from './app-reducer';
 import * as actions from './reducer-actions';
 
+const state = { todoItems: appReducer(), instructionsVisible: true };
 export const AppStateContext = createContext();
 
 export const EventType = {
@@ -11,12 +12,14 @@ export const EventType = {
   ItemMerged: 'itemMerged',
 };
 
-export const AppStateProvider = ({ children }) => {
-  const [todoItems, dispatch] = useReducer(appReducer, appReducer());
+export const AppStateProvider = ({ initialState = state, children }) => {
+  const [todoItems, dispatch] = useReducer(appReducer, initialState.todoItems);
   const [latestEvent, setLatestEvent] = useState(null);
   const sendEvent = (eventType, data) =>
     setLatestEvent({ type: eventType, data });
-  const [instructionsVisible, setInstructionsVisible] = useState(true);
+  const [instructionsVisible, setInstructionsVisible] = useState(
+    initialState.instructionsVisible
+  );
 
   const dismissInstructions = () => setInstructionsVisible(false);
   const completeItem = (itemId) => dispatch(actions.completeItem(itemId));

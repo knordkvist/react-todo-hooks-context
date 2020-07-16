@@ -46,6 +46,7 @@ export default function Item({ item }) {
       />
       <input
         className="item-text-input"
+        aria-label={'Todo description'}
         type="text"
         readOnly={item.state === ItemState.Completed}
         value={item.text}

@@ -1,177 +1,186 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, getByLabelText } from 'test-utils';
 import '@testing-library/jest-dom/extend-expect';
-import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import App from '../app';
+import TodoList from '../components/TodoList';
+import { AppStateProvider } from '../context/app-state';
+import ActiveItems from '../components/ActiveItems';
+import CompletedItems from '../components/CompletedItems';
+import Instructions from '../components/Instructions';
 
-function renderUtil() {
-  const renderResult = render(<App />);
-  const newItemInput = renderResult.getByPlaceholderText('todo...');
+const renderUtil = (component, options = {}) => {
+  if (!component) throw new Error('No component supplied');
 
-  const addItem = async (text = '') => {
+  const addItem = async (renderResult, newItemInput, text = '') => {
     await userEvent.type(newItemInput, text, {
       // The delay is useful for catching focus loss, eg. due to erroneous rerendering
       delay: 1,
     });
 
-    const addedInput = renderResult.getByDisplayValue(text);
-    const itemId = addedInput.dataset.itemId;
+    const input = renderResult.getByDisplayValue(text);
+    const itemId = input.dataset.itemId;
+    const itemContainer = () => renderResult.getByTestId(itemId);
 
     return {
-      addedInput,
+      addedInput: () => getByLabelText(itemContainer(), 'Todo description'),
       itemId,
-      get itemContainer() {
-        return renderResult.getByTestId(itemId);
-      },
-      get toggleCheckbox() {
-        return within(this.itemContainer).getByLabelText('Toggle todo');
+      itemContainer,
+      toggleCheckbox() {
+        return getByLabelText(itemContainer(), 'Toggle todo');
       },
     };
   };
 
+  const renderResult = render(component, AppStateProvider, options);
   return {
     ...renderResult,
-    newItemInput,
-    addItem,
-    get completedItemsContainer() {
-      return renderResult.getByTestId('completed-items-container');
-    },
-    get activeItemsContainer() {
-      return renderResult.getByTestId('active-items-container');
-    },
-    get todoItems() {
-      return document.querySelectorAll('.check-list li.todo-item');
-    },
-    get instructionsContainer() {
-      return renderResult.queryByTestId('instructions-container');
-    },
+    addItem: (text) => addItem(renderResult, renderResult.newItemInput(), text),
   };
-}
+};
 
 it('automatically focuses the new item input', () => {
-  const { newItemInput } = renderUtil();
+  const { newItemInput } = renderUtil(<TodoList />);
 
-  expect(newItemInput).toHaveFocus();
+  expect(newItemInput()).toHaveFocus();
 });
 
 it('adds an active todo when entering text', async () => {
-  const { addItem, activeItemsContainer } = renderUtil();
+  const { addItem, activeItemsContainer } = renderUtil(<TodoList />);
   const text = 'buy milk';
 
   const { toggleCheckbox, addedInput, itemContainer } = await addItem(text);
 
-  expect(toggleCheckbox).not.toBeChecked();
-  expect(addedInput).toHaveValue(text);
-  expect(activeItemsContainer).toContainElement(itemContainer);
-  expect(activeItemsContainer.querySelectorAll('li.todo-item')).toHaveLength(1);
+  expect(toggleCheckbox()).not.toBeChecked();
+  expect(addedInput()).toHaveValue(text);
+  expect(activeItemsContainer()).toContainElement(itemContainer());
+  expect(activeItemsContainer().querySelectorAll('li.todo-item')).toHaveLength(
+    1
+  );
 });
 
 it('clears the new item input after adding a new item', async () => {
-  const { addItem, newItemInput } = renderUtil();
+  const { addItem, newItemInput } = renderUtil(<ActiveItems />);
 
   await addItem('a new item!');
 
-  expect(newItemInput).toHaveValue('');
+  expect(newItemInput()).toHaveValue('');
 });
 
 it('can complete active items', async () => {
-  const { addItem, completedItemsContainer } = renderUtil();
+  const { addItem, completedItemsContainer } = renderUtil(
+    <>
+      <ActiveItems />
+      <CompletedItems />
+    </>
+  );
   const text = 'do thing';
 
-  const addItemRes = await addItem(text);
-  fireEvent.click(addItemRes.toggleCheckbox);
+  const { itemContainer, toggleCheckbox } = await addItem(text);
+  fireEvent.click(toggleCheckbox());
 
-  expect(completedItemsContainer).toContainElement(addItemRes.itemContainer);
-  expect(addItemRes.toggleCheckbox).toBeChecked();
+  expect(completedItemsContainer()).toContainElement(itemContainer());
+  expect(toggleCheckbox()).toBeChecked();
 });
 
 it('can uncheck completed items', async () => {
-  const { addItem, activeItemsContainer } = renderUtil();
+  const { addItem, activeItemsContainer } = renderUtil(
+    <>
+      <ActiveItems />
+      <CompletedItems />
+    </>
+  );
   const text = 'something fun';
 
-  const addItemRes = await addItem(text);
-  fireEvent.click(addItemRes.toggleCheckbox);
-  fireEvent.click(addItemRes.toggleCheckbox);
+  const { toggleCheckbox, itemContainer } = await addItem(text);
+  fireEvent.click(toggleCheckbox());
+  fireEvent.click(toggleCheckbox());
 
-  expect(activeItemsContainer).toContainElement(addItemRes.itemContainer);
-  expect(addItemRes.toggleCheckbox).not.toBeChecked();
+  expect(activeItemsContainer()).toContainElement(itemContainer());
+  expect(toggleCheckbox()).not.toBeChecked();
 });
 
 it('can edit active items', async () => {
-  const { addItem } = renderUtil();
   const text = 'unedited';
-  const { addedInput } = await addItem(text);
   const newText = 'i was edited';
+  const { addItem } = renderUtil(<ActiveItems />);
+  const { addedInput } = await addItem(text);
 
-  userEvent.type(addedInput, '{backspace}'.repeat(text.length));
-  await userEvent.type(addedInput, newText, { delay: 1 });
+  userEvent.type(addedInput(), '{backspace}'.repeat(text.length));
+  await userEvent.type(addedInput(), newText, { delay: 1 });
 
-  expect(addedInput.value).toBe(newText);
+  expect(addedInput()).toHaveValue(newText);
 });
 
 describe('pressing enter when editing an item', () => {
   describe('active items', () => {
     it('creates and focuses a new empty item when there is no text to the right of the caret', async () => {
-      const renderUtilRes = renderUtil();
-      const { addItem, getByDisplayValue } = renderUtilRes;
+      const { addItem, getByDisplayValue, todoItems } = renderUtil(
+        <ActiveItems />
+      );
 
-      const addItemRes = await addItem('item1');
-      userEvent.type(addItemRes.addedInput, '{Enter}');
-      fireEvent.keyDown(addItemRes.addedInput, { key: 'Enter' });
+      const { addedInput } = await addItem('item1');
+      userEvent.type(addedInput(), '{Enter}');
+      fireEvent.keyDown(addedInput(), { key: 'Enter' });
       await userEvent.type(document.activeElement, 'item2', { delay: 1 });
       const item2Input = getByDisplayValue('item2');
 
       expect(item2Input).toHaveFocus();
-      expect(renderUtilRes.todoItems).toHaveLength(2);
+      expect(todoItems()).toHaveLength(2);
     });
 
     it('creates a new item containing the text to the right of the caret', async () => {
-      const renderResult = renderUtil();
-      const { addItem, getByDisplayValue } = renderResult;
+      const renderResult = renderUtil(<ActiveItems />);
+      const { addItem, getByDisplayValue, todoItems } = renderResult;
       const text1 = 'split';
       const text2 = 'item';
 
       const { addedInput } = await addItem(text1 + text2);
       // Firing arrow events was unsuccessful, set selectionStart as workaround
-      addedInput.selectionStart = text1.length;
-      fireEvent.keyDown(addedInput, { key: 'Enter' });
+      addedInput().selectionStart = text1.length;
+      fireEvent.keyDown(addedInput(), { key: 'Enter' });
 
       expect(getByDisplayValue(text1)).toBeInTheDocument();
       expect(getByDisplayValue(text2)).toBeInTheDocument();
-      expect(renderResult.todoItems).toHaveLength(2);
+      expect(todoItems()).toHaveLength(2);
     });
   });
 
   describe('completed items', () => {
     it('does not split completed items', async () => {
-      const renderResult = renderUtil();
-      const { addItem, completedItemsContainer } = renderResult;
+      const { addItem, completedItemsContainer, todoItems } = renderUtil(
+        <>
+          <ActiveItems />
+          <CompletedItems />
+        </>
+      );
       const text = 'completed';
 
-      const addItemRes = await addItem(text);
-      userEvent.click(addItemRes.toggleCheckbox);
-      addItemRes.addedInput.selectionStart = 2;
-      fireEvent.keyDown(addItemRes.addedInput, { key: 'Enter' });
+      const { itemContainer, toggleCheckbox, addedInput } = await addItem(text);
+      userEvent.click(toggleCheckbox());
+      addedInput().selectionStart = 2;
+      fireEvent.keyDown(addedInput(), { key: 'Enter' });
 
-      expect(completedItemsContainer).toContainElement(
-        addItemRes.itemContainer
-      );
-      expect(renderResult.todoItems).toHaveLength(1);
+      expect(completedItemsContainer()).toContainElement(itemContainer());
+      expect(todoItems()).toHaveLength(1);
     });
   });
 });
 
 describe('merging items', () => {
   it('can merge an item into the one before it', async () => {
-    const { addItem, getByDisplayValue, queryByDisplayValue } = renderUtil();
+    const { addItem, getByDisplayValue, queryByDisplayValue } = renderUtil(
+      <>
+        <ActiveItems />
+        <CompletedItems />
+      </>
+    );
     const item1Text = 'item1';
     const item2Text = 'item2';
 
     await addItem(item1Text);
     const { addedInput: item2Input } = await addItem(item2Text);
-    item2Input.selectionStart = 0;
-    fireEvent.keyDown(item2Input, { key: 'Backspace' });
+    item2Input().selectionStart = 0;
+    fireEvent.keyDown(item2Input(), { key: 'Backspace' });
 
     expect(queryByDisplayValue(item1Text)).not.toBeInTheDocument();
     expect(queryByDisplayValue(item2Text)).not.toBeInTheDocument();
@@ -183,28 +192,38 @@ describe('merging items', () => {
   });
 
   it('does nothing if there is no item before it', async () => {
-    const { addItem, queryByDisplayValue } = renderUtil();
+    const { addItem, queryByDisplayValue } = renderUtil(
+      <>
+        <ActiveItems />
+        <CompletedItems />
+      </>
+    );
     const item1Text = 'item1';
     const item2Text = 'item2';
 
     const { addedInput: item1Input } = await addItem(item1Text);
     await addItem(item2Text);
-    item1Input.focus();
-    item1Input.selectionStart = 0;
-    fireEvent.keyDown(item1Input, { key: 'Backspace' });
+    item1Input().focus();
+    item1Input().selectionStart = 0;
+    fireEvent.keyDown(item1Input(), { key: 'Backspace' });
 
     expect(queryByDisplayValue(item1Text)).toBeInTheDocument();
     expect(queryByDisplayValue(item2Text)).toBeInTheDocument();
-    expect(item1Input).toHaveFocus();
+    expect(item1Input()).toHaveFocus();
   });
 });
 
 describe('showing the number of completed items', () => {
   it('shows the number of completed items', async () => {
-    const { addItem, getByText } = renderUtil();
+    const { addItem, getByText } = renderUtil(
+      <>
+        <ActiveItems />
+        <CompletedItems />
+      </>
+    );
     const addAndComplete = async (text) => {
       const { toggleCheckbox } = await addItem(text);
-      userEvent.click(toggleCheckbox);
+      userEvent.click(toggleCheckbox());
     };
 
     await addAndComplete('item1');
@@ -214,34 +233,38 @@ describe('showing the number of completed items', () => {
   });
 
   it("hides the number of completed items when there aren't any", () => {
-    const { completedItemsContainer } = renderUtil();
+    const { completedItemsContainer } = renderUtil(<CompletedItems />);
 
-    expect(completedItemsContainer).toHaveClass('hidden');
+    expect(completedItemsContainer()).toHaveClass('hidden');
   });
 });
 
 describe('app instructions', () => {
   it('is visible when the app is loaded', () => {
-    const { getByText } = renderUtil();
+    const { getByText } = renderUtil(<Instructions />);
 
     expect(getByText('Start typing to add a new item')).toBeDefined();
     expect(getByText('Got it!')).toBeDefined();
   });
 
   it('can be dismissed by clicking the button', () => {
-    const renderResult = renderUtil();
+    const { instructionsContainer, getByText } = renderUtil(<Instructions />);
 
-    fireEvent.click(
-      within(renderResult.instructionsContainer).getByText('Got it!')
-    );
+    const dismissButton = getByText('Got it!');
+    fireEvent.click(dismissButton);
 
-    expect(renderResult.instructionsContainer).toBeNull();
+    expect(instructionsContainer()).not.toBeInTheDocument();
   });
 
   it('is automatically dismissed when an item is added', async () => {
-    const { addItem, queryByTestId } = renderUtil();
+    const { addItem, instructionsContainer } = renderUtil(
+      <>
+        <ActiveItems />
+        <Instructions />
+      </>
+    );
 
     await addItem('a');
-    expect(queryByTestId('instructions-container')).toBeNull();
+    expect(instructionsContainer()).toBeNull();
   });
 });
