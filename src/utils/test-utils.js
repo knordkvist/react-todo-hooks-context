@@ -7,7 +7,7 @@ import { curry } from 'ramda';
 import theme from '../theme';
 
 const AllProviders = (AppStateProvider, initialState) => ({ children }) => (
-  <AppStateProvider initalState={initialState}>
+  <AppStateProvider initialState={initialState}>
     <ThemeProvider theme={theme}>{children}</ThemeProvider>
   </AppStateProvider>
 );
