@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppStateProvider } from '../context/app-state';
-import { render as renderUnbound, fireEvent } from 'test-utils';
+import { render as renderWithoutProvider, fireEvent } from 'test-utils';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import TodoList from '../components/TodoList';
@@ -8,7 +8,7 @@ import ActiveItems from '../components/ActiveItems';
 import CompletedItems from '../components/CompletedItems';
 import Instructions from '../components/Instructions';
 
-const render = renderUnbound.bind(null, AppStateProvider);
+const render = renderWithoutProvider(AppStateProvider);
 
 it('automatically focuses the new item input', () => {
   const { newItemInput } = render(<TodoList />);
