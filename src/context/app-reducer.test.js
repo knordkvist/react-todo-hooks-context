@@ -1,4 +1,4 @@
-import appReducer from '../context/app-reducer';
+import appReducer from './app-reducer';
 import {
   addItem,
   completeItem,
@@ -6,9 +6,9 @@ import {
   editItem,
   splitItem,
   mergeItem,
-} from '../context/reducer-actions';
-import Item from '../context/Item';
-import Items from '../context/Items';
+} from './reducer-actions';
+import Item from './Item';
+import Items from './Items';
 
 const chainActions = (...actions) =>
   chainActionsWithState(undefined, ...actions);
