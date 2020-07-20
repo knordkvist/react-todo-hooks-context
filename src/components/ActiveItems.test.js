@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
 import { AppStateProvider } from '../context/app-state';
-import Item from '../context/Item';
+import Item from '../model/Item';
 import { utils as reducerUtils } from '../context/app-reducer.test';
 import * as reducerActions from '../context/reducer-actions';
 

@@ -1,5 +1,5 @@
 import { immerable } from 'immer';
-import { nextId } from './reducer-actions';
+import { nextId } from '../context/reducer-actions';
 
 export default class Item {
   constructor({ text = '', state = Item.State.Active, id = nextId() }) {

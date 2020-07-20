@@ -7,8 +7,8 @@ import {
   splitItem,
   mergeItem,
 } from './reducer-actions';
-import Item from './Item';
-import Items from './Items';
+import Item from '../model/Item';
+import Items from '../model/Items';
 
 const chainActions = (...actions) =>
   chainActionsWithState(undefined, ...actions);

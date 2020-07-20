@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import ContextItem from '../context/Item';
+import ContextItem from '../model/Item';
 import { AppStateContext } from '../context/app-state';
 import { useFocusable } from '../interactions/focusable';
 const ItemState = ContextItem.State;

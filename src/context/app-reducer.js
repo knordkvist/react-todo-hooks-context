@@ -1,7 +1,7 @@
 import produce from 'immer';
 
-import Items from './Items';
-import Item from './Item';
+import Items from '../model/Items';
+import Item from '../model/Item';
 import {
   addItem,
   completeItem,
