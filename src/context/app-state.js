@@ -4,15 +4,15 @@ import appReducer from './app-reducer';
 import * as actions from './reducer-actions';
 
 const state = { todoItems: appReducer(), instructionsVisible: true };
-export const AppStateContext = createContext();
+const AppStateContext = createContext();
 
-export const EventType = {
+const EventType = {
   ItemAdded: 'itemAdded',
   ItemSplit: 'itemSplit',
   ItemMerged: 'itemMerged',
 };
 
-export const AppStateProvider = ({ initialState = state, children }) => {
+const AppStateProvider = ({ initialState = state, children }) => {
   const [todoItems, dispatch] = useReducer(appReducer, initialState.todoItems);
   const [latestEvent, setLatestEvent] = useState(null);
   const sendEvent = (eventType, data) =>
@@ -73,3 +73,5 @@ export const AppStateProvider = ({ initialState = state, children }) => {
     </AppStateContext.Provider>
   );
 };
+
+export { AppStateContext, EventType, AppStateProvider };

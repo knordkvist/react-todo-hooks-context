@@ -2,7 +2,7 @@ import { curry } from 'ramda';
 
 const elements = {};
 
-export function focusElement(id, caretAt) {
+function focusElement(id, caretAt) {
   const element = elements[id];
   element.focus();
   if (caretAt !== undefined) {
@@ -12,6 +12,8 @@ export function focusElement(id, caretAt) {
 
 const register = curry((id, element) => (elements[id] = element));
 
-export function useFocusable(id) {
+function useFocusable(id) {
   return register(id);
 }
+
+export { focusElement, useFocusable };
