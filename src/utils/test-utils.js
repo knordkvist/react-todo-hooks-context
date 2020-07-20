@@ -35,7 +35,7 @@ const addItem = async (renderResult, newItemInput, text = '') => {
 //define a custom render method, with wrapper provider
 // TODO: Importing AppStateProvider directly results in context being undefined
 const customRender = curry(
-  (AppStateProvider, ui, options = {}, initialState) => {
+  (AppStateProvider, ui, initialState = undefined, options = {}) => {
     if (!ui) throw new Error('No component supplied');
 
     const renderResult = render(ui, {
