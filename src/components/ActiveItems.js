@@ -31,11 +31,7 @@ function Focusable({ items, render }) {
     }
   }, [latestEvent]);
 
-  return items.map((item) => {
-    // Pass a callback ref to the item
-    const props = {};
-    return render(item, props);
-  });
+  return items.map((item) => render(item));
 }
 
 export default function ActiveItems() {

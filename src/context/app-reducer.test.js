@@ -126,3 +126,8 @@ describe('merging items', () => {
     expect(expected).toEqual(split);
   });
 });
+
+export const utils = {
+  chainActions,
+  chainActionsWithState,
+};

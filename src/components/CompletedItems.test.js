@@ -1,94 +1,97 @@
 import React from 'react';
-import { render as renderWithoutProvider, fireEvent, within } from 'test-utils';
+import {
+  render as renderWithoutProvider,
+  fireEvent,
+  waitFor,
+} from 'test-utils';
+import { utils as reducerUtils } from '../context/app-reducer.test';
+import { addItem } from '../context/reducer-actions';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
 import { AppStateProvider } from '../context/app-state';
+import Item from '../context/Item';
 
 const render = renderWithoutProvider(AppStateProvider);
+const { chainActions } = reducerUtils;
 
 it('can uncheck completed items', async () => {
-  const {
-    actions: { addItem },
-    activeItemsContainer,
-  } = render(
+  const item = { text: 'something fun', state: Item.State.Completed, id: 0 };
+
+  const { activeItemsContainer, todoItemContainer, toggleCheckbox } = render(
     <>
       <ActiveItems />
       <CompletedItems />
-    </>
+    </>,
+    { todoItems: chainActions(addItem(item)) }
   );
-  const text = 'something fun';
+  const checkbox = toggleCheckbox(item.id);
+  userEvent.click(checkbox);
 
-  const { toggleCheckbox, itemContainer } = await addItem(text);
-  userEvent.click(toggleCheckbox());
-  userEvent.click(toggleCheckbox());
-
-  expect(activeItemsContainer()).toContainElement(itemContainer());
-  expect(toggleCheckbox()).not.toBeChecked();
+  expect(activeItemsContainer()).toContainElement(todoItemContainer(item.id));
+  waitFor(() => expect(checkbox).not.toBeChecked());
 });
 
 it("can't edit item description", async () => {
-  const {
-    actions: { addItem },
-  } = render(
-    <>
-      <ActiveItems />
-      <CompletedItems />
-    </>
-  );
+  const item = { text: 'completed', state: Item.State.Completed, id: 0 };
 
-  const { itemContainer, toggleCheckbox } = await addItem('completed');
-  userEvent.click(toggleCheckbox());
+  const { descriptionInput } = render(<CompletedItems />, {
+    todoItems: chainActions(addItem(item)),
+  });
 
-  expect(
-    within(itemContainer()).getByLabelText('Todo description')
-  ).toHaveAttribute('readonly');
+  expect(descriptionInput(item.id)).toHaveAttribute('readonly');
 });
 
 describe('pressing enter when editing description', () => {
   it('does not split items', async () => {
+    const itemId = 0;
     const {
-      actions: { addItem },
       completedItemsContainer,
+      descriptionInput,
+      todoItemContainer,
       todoItems,
-    } = render(
-      <>
-        <ActiveItems />
-        <CompletedItems />
-      </>
+    } = render(<CompletedItems />, {
+      todoItems: chainActions(
+        addItem({
+          text: 'completed item',
+          state: Item.State.Completed,
+          id: itemId,
+        })
+      ),
+    });
+
+    const input = descriptionInput(itemId);
+    input.selectionStart = 2;
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(completedItemsContainer()).toContainElement(
+      todoItemContainer(itemId)
     );
-    const text = 'completed';
-
-    const { itemContainer, toggleCheckbox, addedInput } = await addItem(text);
-    userEvent.click(toggleCheckbox());
-    addedInput().selectionStart = 2;
-    fireEvent.keyDown(addedInput(), { key: 'Enter' });
-
-    expect(completedItemsContainer()).toContainElement(itemContainer());
     expect(todoItems()).toHaveLength(1);
   });
 });
 
 it('shows the number of completed items', async () => {
-  const {
-    actions: { addItem },
-    getByText,
-  } = render(
-    <>
-      <ActiveItems />
-      <CompletedItems />
-    </>
+  const oneCompletedItem = chainActions(
+    addItem({ state: Item.State.Completed }),
+    addItem({ state: Item.State.Active })
   );
-  const addAndComplete = async (text) => {
-    const { toggleCheckbox } = await addItem(text);
-    userEvent.click(toggleCheckbox());
-  };
+  const twoCompletedItems = chainActions(
+    addItem({ state: Item.State.Completed }),
+    addItem({ state: Item.State.Active }),
+    addItem({ state: Item.State.Completed })
+  );
 
-  await addAndComplete('item1');
-  expect(getByText('1 Completed item')).toBeDefined();
-  await addAndComplete('item2');
-  expect(getByText('2 Completed items')).toBeDefined();
+  const renderResult1 = render(<CompletedItems />, {
+    todoItems: oneCompletedItem,
+  });
+  const renderResult2 = render(<CompletedItems />, {
+    todoItems: twoCompletedItems,
+  });
+
+  expect(renderResult1.getByText('1 Completed item')).toBeDefined();
+  expect(renderResult2.getByText('2 Completed items')).toBeDefined();
 });
 
 it("hides the number of completed items when there aren't any", () => {

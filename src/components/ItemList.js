@@ -42,7 +42,7 @@ export default function ItemList({ items, children, ItemWrapper }) {
       {ItemWrapper ? (
         <ItemWrapper
           items={items}
-          render={(item, props) => (
+          render={(item, props = {}) => (
             <Item item={item} key={item.id} {...props} />
           )}
         ></ItemWrapper>

@@ -5,24 +5,27 @@ import userEvent from '@testing-library/user-event';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
 import { AppStateProvider } from '../context/app-state';
+import Item from '../context/Item';
+import { utils as reducerUtils } from '../context/app-reducer.test';
+import * as reducerActions from '../context/reducer-actions';
 
 const render = renderWithoutProvider(AppStateProvider);
+const { chainActions } = reducerUtils;
 
 it('adds an active todo when entering text', async () => {
   const {
     actions: { addItem },
     activeItemsContainer,
+    todoItems,
   } = render(<ActiveItems />);
-  const text = 'buy milk';
+  const text = 'todo';
 
   const { toggleCheckbox, addedInput, itemContainer } = await addItem(text);
 
   expect(toggleCheckbox()).not.toBeChecked();
   expect(addedInput()).toHaveValue(text);
   expect(activeItemsContainer()).toContainElement(itemContainer());
-  expect(activeItemsContainer().querySelectorAll('li.todo-item')).toHaveLength(
-    1
-  );
+  expect(todoItems()).toHaveLength(1);
 });
 
 it('clears the new item input after adding a new item', async () => {
@@ -31,76 +34,83 @@ it('clears the new item input after adding a new item', async () => {
     newItemInput,
   } = render(<ActiveItems />);
 
-  await addItem('a new item!');
+  await addItem('todo');
 
   expect(newItemInput()).toHaveValue('');
 });
 
 it('can complete items', async () => {
-  const {
-    actions: { addItem },
-    completedItemsContainer,
-  } = render(
+  const addedItem = { state: Item.State.Active, id: 0 };
+  const { completedItemsContainer, toggleCheckbox, todoItemContainer } = render(
     <>
       <ActiveItems />
       <CompletedItems />
-    </>
+    </>,
+    { todoItems: chainActions(reducerActions.addItem(addedItem)) }
   );
-  const text = 'do thing';
 
-  const { itemContainer, toggleCheckbox } = await addItem(text);
-  userEvent.click(toggleCheckbox());
+  const checkbox = toggleCheckbox(addedItem.id);
+  userEvent.click(checkbox);
 
-  expect(completedItemsContainer()).toContainElement(itemContainer());
-  expect(toggleCheckbox()).toBeChecked();
+  expect(completedItemsContainer()).toContainElement(
+    todoItemContainer(addedItem.id)
+  );
+  expect(checkbox).toBeChecked();
 });
 
 it('can edit items', async () => {
-  const text = 'unedited';
-  const newText = 'i was edited';
-  const {
-    actions: { addItem },
-  } = render(<ActiveItems />);
-  const { addedInput } = await addItem(text);
+  const uneditedItem = {
+    text: 'unedited',
+    id: '0',
+  };
+  const newText = 'new';
+  const { descriptionInput } = render(<ActiveItems />, {
+    todoItems: chainActions(reducerActions.addItem(uneditedItem)),
+  });
+  const input = descriptionInput(uneditedItem.id);
 
-  userEvent.type(addedInput(), '{backspace}'.repeat(text.length));
-  await userEvent.type(addedInput(), newText, { delay: 1 });
+  userEvent.type(input, '{backspace}'.repeat(uneditedItem.text.length));
+  userEvent.type(input, newText);
 
-  expect(addedInput()).toHaveValue(newText);
+  expect(input).toHaveValue(newText);
 });
 
 describe('pressing enter when editing description', () => {
   it('creates and focuses a new empty item when there is no text to the right of the caret', async () => {
-    const {
-      actions: { addItem },
-      getByDisplayValue,
-      todoItems,
-    } = render(<ActiveItems />);
+    const itemId = 0;
+    const item2Text = 'i2';
+    const { getByDisplayValue, descriptionInput, todoItems } = render(
+      <ActiveItems />,
+      {
+        todoItems: chainActions(reducerActions.addItem({ id: itemId })),
+      }
+    );
 
-    const { addedInput } = await addItem('item1');
-    userEvent.type(addedInput(), '{Enter}');
-    fireEvent.keyDown(addedInput(), { key: 'Enter' });
-    await userEvent.type(document.activeElement, 'item2', { delay: 1 });
-    const item2Input = getByDisplayValue('item2');
+    const input = descriptionInput(itemId);
+    userEvent.type(input, '{Enter}');
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await userEvent.type(document.activeElement, item2Text, { delay: 1 });
+    const item2Input = getByDisplayValue(item2Text);
 
     expect(item2Input).toHaveFocus();
     expect(todoItems()).toHaveLength(2);
   });
 
   it('creates a new item containing the text to the right of the caret', async () => {
-    const renderResult = render(<ActiveItems />);
-    const {
-      actions: { addItem },
-      getByDisplayValue,
-      todoItems,
-    } = renderResult;
     const text1 = 'split';
     const text2 = 'item';
+    const item1 = { text: text1 + text2, id: 0 };
+    const { getByDisplayValue, todoItems, descriptionInput } = render(
+      <ActiveItems />,
+      {
+        todoItems: chainActions(reducerActions.addItem(item1)),
+      }
+    );
 
-    const { addedInput } = await addItem(text1 + text2);
     // Firing arrow events was unsuccessful, set selectionStart as workaround
-    addedInput().selectionStart = text1.length;
-    fireEvent.keyDown(addedInput(), { key: 'Enter' });
+    const input = descriptionInput(item1.id);
+    input.selectionStart = text1.length;
+    fireEvent.keyDown(input, { key: 'Enter' });
 
     expect(getByDisplayValue(text1)).toBeInTheDocument();
     expect(getByDisplayValue(text2)).toBeInTheDocument();
@@ -110,54 +120,48 @@ describe('pressing enter when editing description', () => {
 
 describe('merging items', () => {
   it('can merge an item into the one before it', async () => {
-    const {
-      actions: { addItem },
-      getByDisplayValue,
-      queryByDisplayValue,
-    } = render(
-      <>
-        <ActiveItems />
-        <CompletedItems />
-      </>
+    const item1 = { text: 'item1', id: 0 };
+    const item2 = { text: 'item2', id: 1 };
+    const { getByDisplayValue, queryByDisplayValue, descriptionInput } = render(
+      <ActiveItems />,
+      {
+        todoItems: chainActions(
+          reducerActions.addItem(item1),
+          reducerActions.addItem(item2)
+        ),
+      }
     );
-    const item1Text = 'item1';
-    const item2Text = 'item2';
 
-    await addItem(item1Text);
-    const { addedInput: item2Input } = await addItem(item2Text);
-    item2Input().selectionStart = 0;
-    fireEvent.keyDown(item2Input(), { key: 'Backspace' });
+    const item2Input = descriptionInput(item2.id);
+    item2Input.selectionStart = 0;
+    fireEvent.keyDown(item2Input, { key: 'Backspace' });
 
-    expect(queryByDisplayValue(item1Text)).not.toBeInTheDocument();
-    expect(queryByDisplayValue(item2Text)).not.toBeInTheDocument();
-    const mergedInto = getByDisplayValue(item1Text + item2Text);
+    expect(queryByDisplayValue(item1.text)).not.toBeInTheDocument();
+    expect(queryByDisplayValue(item2.text)).not.toBeInTheDocument();
+    const mergedInto = getByDisplayValue(item1.text + item2.text);
     expect(mergedInto).toBeInTheDocument();
     expect(mergedInto).toHaveFocus();
-    expect(mergedInto.selectionStart).toBe(item1Text.length);
-    expect(mergedInto.selectionEnd).toBe(item1Text.length);
+    expect(mergedInto.selectionStart).toBe(item1.text.length);
+    expect(mergedInto.selectionEnd).toBe(item1.text.length);
   });
 
   it('does nothing if there is no item before it', async () => {
-    const {
-      actions: { addItem },
-      queryByDisplayValue,
-    } = render(
-      <>
-        <ActiveItems />
-        <CompletedItems />
-      </>
-    );
-    const item1Text = 'item1';
+    const item1 = { text: 'item1', id: 0 };
     const item2Text = 'item2';
+    const { queryByDisplayValue, descriptionInput } = render(<ActiveItems />, {
+      todoItems: chainActions(
+        reducerActions.addItem(item1),
+        reducerActions.addItem({ text: item2Text })
+      ),
+    });
 
-    const { addedInput: item1Input } = await addItem(item1Text);
-    await addItem(item2Text);
-    item1Input().focus();
-    item1Input().selectionStart = 0;
-    fireEvent.keyDown(item1Input(), { key: 'Backspace' });
+    const input = descriptionInput(item1.id);
+    input.focus();
+    input.selectionStart = 0;
+    fireEvent.keyDown(input, { key: 'Backspace' });
 
-    expect(queryByDisplayValue(item1Text)).toBeInTheDocument();
+    expect(queryByDisplayValue(item1.text)).toBeInTheDocument();
     expect(queryByDisplayValue(item2Text)).toBeInTheDocument();
-    expect(item1Input()).toHaveFocus();
+    expect(input).toHaveFocus();
   });
 });

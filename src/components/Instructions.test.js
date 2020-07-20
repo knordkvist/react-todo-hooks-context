@@ -8,17 +8,16 @@ import { AppStateProvider } from '../context/app-state';
 const render = renderWithoutProvider(AppStateProvider);
 
 it('is visible when the app is loaded', () => {
-  const { getByText } = render(<Instructions />);
+  const { getByText, dismissButton } = render(<Instructions />);
 
   expect(getByText('Start typing to add a new item')).toBeDefined();
-  expect(getByText('Got it!')).toBeDefined();
+  expect(dismissButton()).toBeInTheDocument();
 });
 
 it('can be dismissed by clicking the button', () => {
-  const { instructionsContainer, getByText } = render(<Instructions />);
+  const { instructionsContainer, dismissButton } = render(<Instructions />);
 
-  const dismissButton = getByText('Got it!');
-  fireEvent.click(dismissButton);
+  fireEvent.click(dismissButton());
 
   expect(instructionsContainer()).not.toBeInTheDocument();
 });
@@ -35,5 +34,6 @@ it('is automatically dismissed when an item is added', async () => {
   );
 
   await addItem('a');
+
   expect(instructionsContainer()).toBeNull();
 });

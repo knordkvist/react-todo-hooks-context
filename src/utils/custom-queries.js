@@ -1,6 +1,11 @@
-import { getByPlaceholderText, queryByTestId } from '@testing-library/react';
+import {
+  queryByPlaceholderText,
+  queryByTestId,
+  queryByLabelText,
+  queryByText,
+} from '@testing-library/react';
 
-const newItemInput = (element) => getByPlaceholderText(element, 'todo...');
+const newItemInput = (element) => queryByPlaceholderText(element, 'todo...');
 const completedItemsContainer = (element) =>
   queryByTestId(element, 'completed-items-container');
 const activeItemsContainer = (element) =>
@@ -9,6 +14,13 @@ const todoItems = (element) =>
   element.querySelectorAll('.check-list li.todo-item');
 const instructionsContainer = (element) =>
   queryByTestId(element, 'instructions-container');
+const todoItemContainer = (element, itemId) =>
+  queryByTestId(element, itemId.toString());
+const toggleCheckbox = (element, itemId) =>
+  queryByLabelText(todoItemContainer(element, itemId), 'Toggle todo');
+const descriptionInput = (element, itemId) =>
+  queryByLabelText(todoItemContainer(element, itemId), 'Todo description');
+const dismissButton = (element) => queryByText(element, 'Got it!');
 
 export {
   newItemInput,
@@ -16,4 +28,8 @@ export {
   activeItemsContainer,
   todoItems,
   instructionsContainer,
+  todoItemContainer,
+  toggleCheckbox,
+  descriptionInput,
+  dismissButton,
 };

@@ -12,15 +12,16 @@ const AllProviders = (AppStateProvider, initialState) => ({ children }) => (
   </AppStateProvider>
 );
 
-const addItem = async (renderResult, newItemInput, text = '') => {
+// Creates a new item by typing text into the add item input
+const addItem = async (renderResult, newItemInput, text = '', delay = 1) => {
   await userEvent.type(newItemInput, text, {
     // The delay is useful for catching focus loss, eg. due to erroneous rerendering
-    delay: 1,
+    delay,
   });
 
   const input = renderResult.getByDisplayValue(text);
   const itemId = input.dataset.itemId;
-  const itemContainer = () => renderResult.getByTestId(itemId);
+  const itemContainer = () => renderResult.todoItemContainer(itemId);
 
   return {
     addedInput: () => getByLabelText(itemContainer(), 'Todo description'),
