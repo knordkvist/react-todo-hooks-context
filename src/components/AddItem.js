@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { AppStateContext } from '../context/app-state';
+import { useAppState } from '../context/app-state';
 import { useFocusable } from '../interactions/focusable';
 
 const ListItem = styled.li`
@@ -18,7 +18,7 @@ const ListItem = styled.li`
 `;
 
 export function AddItem() {
-  const { addItem } = useContext(AppStateContext);
+  const { addItem } = useAppState();
   const focusable = useFocusable('addItem');
 
   return (

@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ContextItem from '../model/Item';
-import { AppStateContext } from '../context/app-state';
+import { useAppState } from '../context/app-state';
 import { useFocusable } from '../interactions/focusable';
 const ItemState = ContextItem.State;
 
@@ -11,7 +11,7 @@ export default function Item({ item }) {
     editItem,
     splitItem,
     mergeItem,
-  } = useContext(AppStateContext);
+  } = useAppState();
   const focusable = useFocusable(item.id);
 
   const onKeyDown = (event) => {

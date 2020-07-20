@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { AppStateContext } from '../context/app-state';
+import { useAppState } from '../context/app-state';
 import Header from './Header';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
@@ -25,7 +25,7 @@ const AppContainer = styled.div`
 `;
 
 export default function TodoList() {
-  const { instructionsVisible } = useContext(AppStateContext);
+  const { instructionsVisible } = useAppState();
 
   return (
     <AppContainer instructionsVisible={instructionsVisible}>

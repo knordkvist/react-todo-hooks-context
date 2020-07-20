@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { AppStateContext } from '../context/app-state';
+import { useAppState } from '../context/app-state';
 
 const DismissButton = styled.button`
   && {
@@ -35,9 +35,7 @@ const Container = styled.div`
 `;
 
 export default function Instructions() {
-  const { instructionsVisible, dismissInstructions } = useContext(
-    AppStateContext
-  );
+  const { instructionsVisible, dismissInstructions } = useAppState();
   return instructionsVisible ? (
     <Container
       visible={instructionsVisible}

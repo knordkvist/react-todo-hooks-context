@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import ItemList from './ItemList';
 import classNames from 'classnames';
-import { AppStateContext } from '../context/app-state';
+import { useAppState } from '../context/app-state';
 
 const Container = styled.div`
   ul.check-list .item-text-input {
@@ -53,7 +53,7 @@ const FadeIn = ({ items, render }) => (
 export default function CompletedItems() {
   const {
     todoItems: { completedItems },
-  } = useContext(AppStateContext);
+  } = useAppState();
 
   return (
     <Container

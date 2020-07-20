@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useState } from 'react';
+import React, { createContext, useReducer, useState, useContext } from 'react';
 
 import appReducer from './app-reducer';
 import * as actions from './reducer-actions';
@@ -11,6 +11,8 @@ const EventType = {
   ItemSplit: 'itemSplit',
   ItemMerged: 'itemMerged',
 };
+
+const useAppState = () => useContext(AppStateContext);
 
 const AppStateProvider = ({ initialState = state, children }) => {
   const [todoItems, dispatch] = useReducer(appReducer, initialState.todoItems);
@@ -74,4 +76,4 @@ const AppStateProvider = ({ initialState = state, children }) => {
   );
 };
 
-export { AppStateContext, EventType, AppStateProvider };
+export { EventType, AppStateProvider, useAppState };

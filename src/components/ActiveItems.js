@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ItemList from './ItemList';
-import { AppStateContext, EventType } from '../context/app-state';
+import { useAppState, EventType } from '../context/app-state';
 import { AddItem } from './AddItem';
 import { focusElement } from '../interactions/focusable';
 
 function Focusable({ items, render }) {
-  const { latestEvent } = useContext(AppStateContext);
+  const { latestEvent } = useAppState();
 
   // When a new item is added, focus that specific input
   useEffect(() => {
@@ -35,7 +35,7 @@ function Focusable({ items, render }) {
 }
 
 export default function ActiveItems() {
-  const { todoItems } = useContext(AppStateContext);
+  const { todoItems } = useAppState();
 
   return (
     <div data-testid="active-items-container">
