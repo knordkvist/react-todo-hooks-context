@@ -1,44 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import Item from 'components/Item';
-
-const CheckList = styled.ul`
-  list-style-type: none;
-  padding-left: 16px;
-
-  li {
-    display: flex;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-
-  li input {
-    border: 0;
-    font-size: 1rem;
-  }
-
-  li input:focus {
-    outline: none;
-  }
-
-  li label {
-    display: flex;
-    align-items: center;
-  }
-
-  li input[type='checkbox'] {
-    flex: none;
-  }
-
-  li input[type='text'] {
-    margin-left: 12px;
-    flex: 1;
-  }
-`;
+import * as S from './styles';
 
 export default function ItemList({ items, children, ItemWrapper }) {
   return (
-    <CheckList className="check-list">
+    <S.ItemList className="check-list">
       {ItemWrapper ? (
         <ItemWrapper
           items={items}
@@ -50,6 +16,6 @@ export default function ItemList({ items, children, ItemWrapper }) {
         items.map((item) => <Item item={item} key={item.id} />)
       )}
       {children}
-    </CheckList>
+    </S.ItemList>
   );
 }
