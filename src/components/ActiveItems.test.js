@@ -20,12 +20,12 @@ it('adds an active todo when typing a description', async () => {
   } = render(<ActiveItems />);
   const description = 'todo';
 
-  const { toggleCheckbox, addedInput, itemContainer } = await addItem(
+  const { toggleCheckbox, descriptionInput, itemContainer } = await addItem(
     description
   );
 
   expect(toggleCheckbox()).not.toBeChecked();
-  expect(addedInput()).toHaveValue(description);
+  expect(descriptionInput()).toHaveValue(description);
   expect(activeItemsContainer()).toContainElement(itemContainer());
   expect(todoItems()).toHaveLength(1);
 });

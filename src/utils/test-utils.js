@@ -29,7 +29,7 @@ const addItem = async (
   const itemContainer = () => renderResult.todoItemContainer(itemId);
 
   return {
-    addedInput: () => getByLabelText(itemContainer(), 'Todo description'),
+    descriptionInput: () => getByLabelText(itemContainer(), 'Todo description'),
     itemId,
     itemContainer,
     toggleCheckbox() {
