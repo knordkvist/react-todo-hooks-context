@@ -14,7 +14,7 @@ function Focusable({ items, render }) {
     const { type: eventType, data: eventData } = latestEvent;
     switch (eventType) {
       case EventType.ItemAdded: {
-        focusElement(eventData.itemId, eventData.text.length);
+        focusElement(eventData.itemId, eventData.description.length);
         break;
       }
       case EventType.ItemSplit: {
@@ -23,7 +23,7 @@ function Focusable({ items, render }) {
       }
       case EventType.ItemMerged: {
         const item = eventData.mergedIntoItem;
-        focusElement(item.id, item.text.length);
+        focusElement(item.id, item.description.length);
         break;
       }
       default:

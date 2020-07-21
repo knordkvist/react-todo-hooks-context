@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { useAppState } from '../context/app-state';
 
 const Container = styled.div`
-  ul.check-list .item-text-input {
+  ul.check-list .item-description-input {
     text-decoration: line-through;
     color: gray;
   }

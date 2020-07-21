@@ -28,7 +28,7 @@ it('produces a valid initial state', () => {
 
 it('can add items', () => {
   const expectedItem = {
-    text: 'item1',
+    description: 'item1',
     id: 0,
     state: Todo.State.Active,
   };
@@ -36,14 +36,14 @@ it('can add items', () => {
   const expectedState = new Todos([expectedItem]);
   const result = appReducer(
     undefined,
-    addItem({ text: expectedItem.text, id: expectedItem.id })
+    addItem({ description: expectedItem.description, id: expectedItem.id })
   );
 
   expect(result).toEqual(expectedState);
 });
 
 it('can complete active items', () => {
-  const item = { text: 'buy things', id: 0 };
+  const item = { description: 'buy things', id: 0 };
   const withCompletedItem = new Todos([
     { ...item, state: Todo.State.Completed },
   ]);
@@ -54,7 +54,7 @@ it('can complete active items', () => {
 });
 
 it('can uncheck completed items', () => {
-  const item = { text: 'do stuff', id: 0 };
+  const item = { description: 'do stuff', id: 0 };
   const withAddedItem = appReducer(undefined, addItem(item));
 
   const state = chainActionsWithState(
@@ -67,10 +67,10 @@ it('can uncheck completed items', () => {
 });
 
 it('can edit active items', () => {
-  const item = { text: 'unedited', id: 0 };
+  const item = { description: 'unedited', id: 0 };
   const expectedState = appReducer(
     undefined,
-    addItem({ ...item, text: 'edited' })
+    addItem({ ...item, description: 'edited' })
   );
 
   const edited = chainActions(addItem(item), editItem(item.id, 'edited'));
@@ -81,11 +81,11 @@ it('can edit active items', () => {
 it('can split an item in two', () => {
   const fragment1 = 'split';
   const fragment2 = 'me';
-  const item = { text: fragment1 + fragment2, id: 0 };
-  const newItem = { text: fragment2, id: 2 };
-  const otherItem = { text: 'other', id: 1 };
+  const item = { description: fragment1 + fragment2, id: 0 };
+  const newItem = { description: fragment2, id: 2 };
+  const otherItem = { description: 'other', id: 1 };
   const expectedState = new Todos([
-    { text: fragment1, id: item.id },
+    { description: fragment1, id: item.id },
     newItem,
     otherItem,
   ]);
@@ -101,11 +101,14 @@ it('can split an item in two', () => {
 
 describe('merging items', () => {
   it('merges the specified item with the one before it', () => {
-    const item1 = { text: 'item1', id: 0 };
-    const item2 = { text: 'item2', id: 1 };
+    const item1 = { description: 'item1', id: 0 };
+    const item2 = { description: 'item2', id: 1 };
     const expectedState = appReducer(
       undefined,
-      addItem({ text: item1.text + item2.text, id: item1.id })
+      addItem({
+        description: item1.description + item2.description,
+        id: item1.id,
+      })
     );
 
     const state = chainActions(
@@ -118,8 +121,11 @@ describe('merging items', () => {
   });
 
   it('does nothing if the item is the first one', () => {
-    const item1 = { text: 'item1', id: 0 };
-    const expected = chainActions(addItem(item1), addItem({ text: 'item2' }));
+    const item1 = { description: 'item1', id: 0 };
+    const expected = chainActions(
+      addItem(item1),
+      addItem({ description: 'item2' })
+    );
 
     const split = chainActionsWithState(expected, mergeItem(item1.id));
 

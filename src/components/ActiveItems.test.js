@@ -12,18 +12,20 @@ import * as reducerActions from '../context/reducer-actions';
 const render = renderWithoutProvider(AppStateProvider);
 const { chainActions } = reducerUtils;
 
-it('adds an active todo when entering text', async () => {
+it('adds an active todo when typing a description', async () => {
   const {
     actions: { addItem },
     activeItemsContainer,
     todoItems,
   } = render(<ActiveItems />);
-  const text = 'todo';
+  const description = 'todo';
 
-  const { toggleCheckbox, addedInput, itemContainer } = await addItem(text);
+  const { toggleCheckbox, addedInput, itemContainer } = await addItem(
+    description
+  );
 
   expect(toggleCheckbox()).not.toBeChecked();
-  expect(addedInput()).toHaveValue(text);
+  expect(addedInput()).toHaveValue(description);
   expect(activeItemsContainer()).toContainElement(itemContainer());
   expect(todoItems()).toHaveLength(1);
 });
@@ -60,7 +62,7 @@ it('can complete items', async () => {
 
 it('can edit items', async () => {
   const uneditedItem = {
-    text: 'unedited',
+    description: 'unedited',
     id: '0',
   };
   const newText = 'new';
@@ -69,7 +71,7 @@ it('can edit items', async () => {
   });
   const input = descriptionInput(uneditedItem.id);
 
-  userEvent.type(input, '{backspace}'.repeat(uneditedItem.text.length));
+  userEvent.type(input, '{backspace}'.repeat(uneditedItem.description.length));
   userEvent.type(input, newText);
 
   expect(input).toHaveValue(newText);
@@ -96,10 +98,10 @@ describe('pressing enter when editing description', () => {
     expect(todoItems()).toHaveLength(2);
   });
 
-  it('creates a new item containing the text to the right of the caret', async () => {
+  it('creates a new item with a description equal to the text to the right of the caret', async () => {
     const text1 = 'split';
     const text2 = 'item';
-    const item1 = { text: text1 + text2, id: 0 };
+    const item1 = { description: text1 + text2, id: 0 };
     const { getByDisplayValue, todoItems, descriptionInput } = render(
       <ActiveItems />,
       {
@@ -120,8 +122,8 @@ describe('pressing enter when editing description', () => {
 
 describe('merging items', () => {
   it('can merge an item into the one before it', async () => {
-    const item1 = { text: 'item1', id: 0 };
-    const item2 = { text: 'item2', id: 1 };
+    const item1 = { description: 'item1', id: 0 };
+    const item2 = { description: 'item2', id: 1 };
     const { getByDisplayValue, queryByDisplayValue, descriptionInput } = render(
       <ActiveItems />,
       {
@@ -136,22 +138,22 @@ describe('merging items', () => {
     item2Input.selectionStart = 0;
     fireEvent.keyDown(item2Input, { key: 'Backspace' });
 
-    expect(queryByDisplayValue(item1.text)).not.toBeInTheDocument();
-    expect(queryByDisplayValue(item2.text)).not.toBeInTheDocument();
-    const mergedInto = getByDisplayValue(item1.text + item2.text);
+    expect(queryByDisplayValue(item1.description)).not.toBeInTheDocument();
+    expect(queryByDisplayValue(item2.description)).not.toBeInTheDocument();
+    const mergedInto = getByDisplayValue(item1.description + item2.description);
     expect(mergedInto).toBeInTheDocument();
     expect(mergedInto).toHaveFocus();
-    expect(mergedInto.selectionStart).toBe(item1.text.length);
-    expect(mergedInto.selectionEnd).toBe(item1.text.length);
+    expect(mergedInto.selectionStart).toBe(item1.description.length);
+    expect(mergedInto.selectionEnd).toBe(item1.description.length);
   });
 
   it('does nothing if there is no item before it', async () => {
-    const item1 = { text: 'item1', id: 0 };
+    const item1 = { description: 'item1', id: 0 };
     const item2Text = 'item2';
     const { queryByDisplayValue, descriptionInput } = render(<ActiveItems />, {
       todoItems: chainActions(
         reducerActions.addItem(item1),
-        reducerActions.addItem({ text: item2Text })
+        reducerActions.addItem({ description: item2Text })
       ),
     });
 
@@ -160,7 +162,7 @@ describe('merging items', () => {
     input.selectionStart = 0;
     fireEvent.keyDown(input, { key: 'Backspace' });
 
-    expect(queryByDisplayValue(item1.text)).toBeInTheDocument();
+    expect(queryByDisplayValue(item1.description)).toBeInTheDocument();
     expect(queryByDisplayValue(item2Text)).toBeInTheDocument();
     expect(input).toHaveFocus();
   });

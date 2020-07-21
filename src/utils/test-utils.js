@@ -12,14 +12,19 @@ const AllProviders = (AppStateProvider, initialState) => ({ children }) => (
   </AppStateProvider>
 );
 
-// Creates a new item by typing text into the add item input
-const addItem = async (renderResult, newItemInput, text = '', delay = 1) => {
-  await userEvent.type(newItemInput, text, {
+// Creates a new item by typing a description into the add item input
+const addItem = async (
+  renderResult,
+  newItemInput,
+  description = '',
+  delay = 1
+) => {
+  await userEvent.type(newItemInput, description, {
     // The delay is useful for catching focus loss, eg. due to erroneous rerendering
     delay,
   });
 
-  const input = renderResult.getByDisplayValue(text);
+  const input = renderResult.getByDisplayValue(description);
   const itemId = input.dataset.itemId;
   const itemContainer = () => renderResult.todoItemContainer(itemId);
 
@@ -50,8 +55,8 @@ const customRender = curry(
     return {
       ...renderResult,
       actions: {
-        addItem: async (text) =>
-          await addItem(renderResult, renderResult.newItemInput(), text),
+        addItem: async (description) =>
+          await addItem(renderResult, renderResult.newItemInput(), description),
       },
     };
   }

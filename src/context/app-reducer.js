@@ -26,19 +26,19 @@ export default produce((draft, { type, payload = {} } = {}) => {
       return;
     }
     case editItem.type: {
-      item.text = payload.text;
+      item.description = payload.description;
       return;
     }
     case splitItem.type: {
-      const textLeft = item.text.slice(0, payload.splitAt);
-      const textRight = item.text.slice(payload.splitAt);
+      const textLeft = item.description.slice(0, payload.splitAt);
+      const textRight = item.description.slice(payload.splitAt);
       const itemIndex = draft.items.indexOf(item);
-      item.text = textLeft;
+      item.description = textLeft;
       draft.items.splice(
         itemIndex + 1,
         0,
         new Todo({
-          text: textRight,
+          description: textRight,
           id: payload.newItemId,
         })
       );
@@ -50,7 +50,7 @@ export default produce((draft, { type, payload = {} } = {}) => {
 
       draft.items.splice(itemIndex, 1);
       const prevItem = draft.items[itemIndex - 1];
-      prevItem.text += item.text;
+      prevItem.description += item.description;
       return;
     }
     default:

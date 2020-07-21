@@ -2,8 +2,8 @@ import { immerable } from 'immer';
 import { nextId } from '../context/reducer-actions';
 
 export default class Todo {
-  constructor({ text = '', state = Todo.State.Active, id = nextId() }) {
-    this.text = text;
+  constructor({ description = '', state = Todo.State.Active, id = nextId() }) {
+    this.description = description;
     this.state = state;
     this.id = id;
   }

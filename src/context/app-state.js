@@ -32,13 +32,14 @@ const AppStateProvider = ({ initialState = state, children }) => {
   const dismissInstructions = () => setInstructionsVisible(false);
   const completeItem = (itemId) => dispatch(actions.completeItem(itemId));
   const uncheckItem = (itemId) => dispatch(actions.uncheckItem(itemId));
-  const editItem = (itemId, text) => dispatch(actions.editItem(itemId, text));
-  const addItem = (text) => {
-    const action = actions.addItem({ text });
+  const editItem = (itemId, description) =>
+    dispatch(actions.editItem(itemId, description));
+  const addItem = (description) => {
+    const action = actions.addItem({ description });
     dispatch(action);
     sendEvent(EventType.ItemAdded, {
       itemId: action.payload.id,
-      text,
+      description,
     });
     dismissInstructions();
   };

@@ -44,11 +44,11 @@ export default function Item({ item }) {
         }
       />
       <input
-        className="item-text-input"
+        className="item-description-input"
         aria-label={'Todo description'}
         type="text"
         readOnly={item.state === Todo.State.Completed}
-        value={item.text}
+        value={item.description}
         ref={focusable}
         data-item-id={item.id}
         onChange={(e) => editItem(item.id, e.target.value)}

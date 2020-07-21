@@ -18,7 +18,7 @@ const { chainActions } = reducerUtils;
 
 it('can uncheck completed items', async () => {
   const item = {
-    text: 'something fun',
+    description: 'something fun',
     state: Todo.State.Completed,
     id: 0,
   };
@@ -38,7 +38,7 @@ it('can uncheck completed items', async () => {
 });
 
 it("can't edit item description", async () => {
-  const item = { text: 'completed', state: Todo.State.Completed, id: 0 };
+  const item = { description: 'completed', state: Todo.State.Completed, id: 0 };
 
   const { descriptionInput } = render(<CompletedItems />, {
     todoItems: chainActions(addItem(item)),
@@ -58,7 +58,7 @@ describe('pressing enter when editing description', () => {
     } = render(<CompletedItems />, {
       todoItems: chainActions(
         addItem({
-          text: 'completed item',
+          description: 'completed item',
           state: Todo.State.Completed,
           id: itemId,
         })

@@ -3,9 +3,13 @@ import Todo from '../model/Todo';
 
 const nextId = uuidv4;
 
-const addItem = ({ text = '', id = nextId(), state = Todo.State.Active }) => ({
+const addItem = ({
+  description = '',
+  id = nextId(),
+  state = Todo.State.Active,
+}) => ({
   type: addItem.type,
-  payload: { id, text, state },
+  payload: { id, description, state },
 });
 addItem.type = 'app-state/addItem';
 
@@ -21,9 +25,9 @@ const uncheckItem = (itemId) => ({
 });
 uncheckItem.type = 'app-state/uncheckItem';
 
-const editItem = (itemId, text) => ({
+const editItem = (itemId, description) => ({
   type: editItem.type,
-  payload: { id: itemId, text },
+  payload: { id: itemId, description },
 });
 editItem.type = 'app-state/editItem';
 
