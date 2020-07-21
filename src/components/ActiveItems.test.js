@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
 import { AppStateProvider } from '../context/app-state';
-import Item from '../model/Item';
+import Todo from '../model/Todo';
 import { utils as reducerUtils } from '../context/app-reducer.test';
 import * as reducerActions from '../context/reducer-actions';
 
@@ -40,7 +40,7 @@ it('clears the new item input after adding a new item', async () => {
 });
 
 it('can complete items', async () => {
-  const addedItem = { state: Item.State.Active, id: 0 };
+  const addedItem = { state: Todo.State.Active, id: 0 };
   const { completedItemsContainer, toggleCheckbox, todoItemContainer } = render(
     <>
       <ActiveItems />

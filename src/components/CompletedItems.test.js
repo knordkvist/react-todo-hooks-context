@@ -11,13 +11,17 @@ import userEvent from '@testing-library/user-event';
 import ActiveItems from './ActiveItems';
 import CompletedItems from './CompletedItems';
 import { AppStateProvider } from '../context/app-state';
-import Item from '../model/Item';
+import Todo from '../model/Todo';
 
 const render = renderWithoutProvider(AppStateProvider);
 const { chainActions } = reducerUtils;
 
 it('can uncheck completed items', async () => {
-  const item = { text: 'something fun', state: Item.State.Completed, id: 0 };
+  const item = {
+    text: 'something fun',
+    state: Todo.State.Completed,
+    id: 0,
+  };
 
   const { activeItemsContainer, todoItemContainer, toggleCheckbox } = render(
     <>
@@ -34,7 +38,7 @@ it('can uncheck completed items', async () => {
 });
 
 it("can't edit item description", async () => {
-  const item = { text: 'completed', state: Item.State.Completed, id: 0 };
+  const item = { text: 'completed', state: Todo.State.Completed, id: 0 };
 
   const { descriptionInput } = render(<CompletedItems />, {
     todoItems: chainActions(addItem(item)),
@@ -55,7 +59,7 @@ describe('pressing enter when editing description', () => {
       todoItems: chainActions(
         addItem({
           text: 'completed item',
-          state: Item.State.Completed,
+          state: Todo.State.Completed,
           id: itemId,
         })
       ),
@@ -74,13 +78,13 @@ describe('pressing enter when editing description', () => {
 
 it('shows the number of completed items', async () => {
   const oneCompletedItem = chainActions(
-    addItem({ state: Item.State.Completed }),
-    addItem({ state: Item.State.Active })
+    addItem({ state: Todo.State.Completed }),
+    addItem({ state: Todo.State.Active })
   );
   const twoCompletedItems = chainActions(
-    addItem({ state: Item.State.Completed }),
-    addItem({ state: Item.State.Active }),
-    addItem({ state: Item.State.Completed })
+    addItem({ state: Todo.State.Completed }),
+    addItem({ state: Todo.State.Active }),
+    addItem({ state: Todo.State.Completed })
   );
 
   const renderResult1 = render(<CompletedItems />, {

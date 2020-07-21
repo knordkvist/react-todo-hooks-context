@@ -1,8 +1,8 @@
 import { immerable } from 'immer';
 import { nextId } from '../context/reducer-actions';
 
-export default class Item {
-  constructor({ text = '', state = Item.State.Active, id = nextId() }) {
+export default class Todo {
+  constructor({ text = '', state = Todo.State.Active, id = nextId() }) {
     this.text = text;
     this.state = state;
     this.id = id;
@@ -13,4 +13,4 @@ export default class Item {
     Completed: 'completed',
   };
 }
-Item[immerable] = true;
+Todo[immerable] = true;

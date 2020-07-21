@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import Item from '../model/Item';
+import Todo from '../model/Todo';
 
 const nextId = uuidv4;
 
-const addItem = ({ text = '', id = nextId(), state = Item.State.Active }) => ({
+const addItem = ({ text = '', id = nextId(), state = Todo.State.Active }) => ({
   type: addItem.type,
   payload: { id, text, state },
 });
