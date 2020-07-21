@@ -1,3 +1,12 @@
-import Header from './Header';
+import React from 'react';
 
-export default Header;
+export default function Header() {
+  return (
+    <h1>
+      Todo{' '}
+      <span role="img" aria-label="Ticked checkbox">
+        ☑️
+      </span>
+    </h1>
+  );
+}

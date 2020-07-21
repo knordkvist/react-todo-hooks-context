@@ -1,3 +1,51 @@
-import Instructions from './Instructions';
+import React from 'react';
+import styled from 'styled-components';
+import { useAppState } from 'context/app-state';
 
-export default Instructions;
+const DismissButton = styled.button`
+  && {
+    right: 5%;
+    background-color: #0078d7;
+    border-color: #0078d7;
+    border: 1.5px solid black;
+    cursor: pointer;
+    border-radius: 3px;
+    color: white;
+    padding: 0.2rem 0.55rem;
+    font-size: 1rem;
+  }
+`;
+const Container = styled.div`
+  position: absolute;
+  display: ${(props) => (props.visible ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: space-around;
+  height: ${(props) => props.theme.instructionsHeight};
+  background-color: ${(props) => props.theme.backgroundColorSecondary};
+  * {
+    background-color: ${(props) => props.theme.backgroundColorSecondary};
+  }
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+`;
+
+export default function Instructions() {
+  const { instructionsVisible, dismissInstructions } = useAppState();
+  return instructionsVisible ? (
+    <Container
+      visible={instructionsVisible}
+      data-testid="instructions-container"
+    >
+      <div></div>
+      <span>Start typing to add a new item</span>
+      <DismissButton type="button" onClick={dismissInstructions}>
+        Got it!
+      </DismissButton>
+    </Container>
+  ) : null;
+}
