@@ -1,7 +1,7 @@
 import produce from 'immer';
 
-import Todos from '../model/Todos';
-import Todo from '../model/Todo';
+import TodoItems from '../model/TodoItems';
+import TodoItem from '../model/TodoItem';
 import {
   addItem,
   completeItem,
@@ -16,13 +16,13 @@ export default produce((draft, { type, payload = {} } = {}) => {
 
   switch (type) {
     case addItem.type:
-      draft.items.push(new Todo(payload));
+      draft.items.push(new TodoItem(payload));
       return;
     case completeItem.type:
-      item.state = Todo.State.Completed;
+      item.state = TodoItem.State.Completed;
       return;
     case uncheckItem.type: {
-      item.state = Todo.State.Active;
+      item.state = TodoItem.State.Active;
       return;
     }
     case editItem.type: {
@@ -37,7 +37,7 @@ export default produce((draft, { type, payload = {} } = {}) => {
       draft.items.splice(
         itemIndex + 1,
         0,
-        new Todo({
+        new TodoItem({
           description: textRight,
           id: payload.newItemId,
         })
@@ -56,4 +56,4 @@ export default produce((draft, { type, payload = {} } = {}) => {
     default:
       return draft;
   }
-}, new Todos([]));
+}, new TodoItems([]));

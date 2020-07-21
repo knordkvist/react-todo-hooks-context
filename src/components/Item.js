@@ -1,5 +1,5 @@
 import React from 'react';
-import Todo from '../model/Todo';
+import TodoItem from '../model/TodoItem';
 import { useAppState } from '../context/app-state';
 import { useFocusable } from '../interactions/focusable';
 
@@ -14,7 +14,7 @@ export default function Item({ item }) {
   const focusable = useFocusable(item.id);
 
   const onKeyDown = (event) => {
-    if (item.state === Todo.State.Completed) return;
+    if (item.state === TodoItem.State.Completed) return;
 
     switch (event.key) {
       case 'Enter': {
@@ -35,10 +35,10 @@ export default function Item({ item }) {
     <li className="todo-item" data-testid={item.id}>
       <input
         type="checkbox"
-        checked={item.state === Todo.State.Completed ? true : undefined}
+        checked={item.state === TodoItem.State.Completed ? true : undefined}
         aria-label={'Toggle todo'}
         onChange={() =>
-          item.state === Todo.State.Completed
+          item.state === TodoItem.State.Completed
             ? uncheckItem(item.id)
             : completeItem(item.id)
         }
@@ -47,7 +47,7 @@ export default function Item({ item }) {
         className="item-description-input"
         aria-label={'Todo description'}
         type="text"
-        readOnly={item.state === Todo.State.Completed}
+        readOnly={item.state === TodoItem.State.Completed}
         value={item.description}
         ref={focusable}
         data-item-id={item.id}

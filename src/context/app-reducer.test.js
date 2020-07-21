@@ -7,8 +7,8 @@ import {
   splitItem,
   mergeItem,
 } from './reducer-actions';
-import Todo from '../model/Todo';
-import Todos from '../model/Todos';
+import TodoItem from '../model/TodoItem';
+import TodoItems from '../model/TodoItems';
 
 const chainActions = (...actions) =>
   chainActionsWithState(undefined, ...actions);
@@ -23,17 +23,17 @@ const chainActionsWithState = (initialState = appReducer(), ...actions) =>
 it('produces a valid initial state', () => {
   const initialState = appReducer();
 
-  expect(initialState).toEqual(new Todos([]));
+  expect(initialState).toEqual(new TodoItems([]));
 });
 
 it('can add items', () => {
   const expectedItem = {
     description: 'item1',
     id: 0,
-    state: Todo.State.Active,
+    state: TodoItem.State.Active,
   };
 
-  const expectedState = new Todos([expectedItem]);
+  const expectedState = new TodoItems([expectedItem]);
   const result = appReducer(
     undefined,
     addItem({ description: expectedItem.description, id: expectedItem.id })
@@ -44,8 +44,8 @@ it('can add items', () => {
 
 it('can complete active items', () => {
   const item = { description: 'buy things', id: 0 };
-  const withCompletedItem = new Todos([
-    { ...item, state: Todo.State.Completed },
+  const withCompletedItem = new TodoItems([
+    { ...item, state: TodoItem.State.Completed },
   ]);
 
   const state = chainActions(addItem(item), completeItem(item.id));
@@ -84,7 +84,7 @@ it('can split an item in two', () => {
   const item = { description: fragment1 + fragment2, id: 0 };
   const newItem = { description: fragment2, id: 2 };
   const otherItem = { description: 'other', id: 1 };
-  const expectedState = new Todos([
+  const expectedState = new TodoItems([
     { description: fragment1, id: item.id },
     newItem,
     otherItem,
