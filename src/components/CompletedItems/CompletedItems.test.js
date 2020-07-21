@@ -3,15 +3,15 @@ import {
   render as renderWithoutProvider,
   fireEvent,
   waitFor,
-} from 'test-utils';
-import { utils as reducerUtils } from '../context/app-reducer.test';
-import { addItem } from '../context/reducer-actions';
+} from 'utils/test-utils';
+import { utils as reducerUtils } from 'context/app-reducer.test';
+import { addItem } from 'context/reducer-actions';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
-import ActiveItems from './ActiveItems';
-import CompletedItems from './CompletedItems';
-import { AppStateProvider } from '../context/app-state';
-import TodoItem from '../model/TodoItem';
+import ActiveItems from 'components/ActiveItems';
+import CompletedItems from 'components/CompletedItems';
+import { AppStateProvider } from 'context/app-state';
+import TodoItem from 'model/TodoItem';
 
 const render = renderWithoutProvider(AppStateProvider);
 const { chainActions } = reducerUtils;

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import ItemList from './ItemList';
-import { useAppState, EventType } from '../context/app-state';
-import { AddItem } from './AddItem';
-import { focusElement } from '../interactions/focusable';
+import ItemList from 'components/ItemList';
+import { useAppState, EventType } from 'context/app-state';
+import AddItem from 'components/AddItem';
+import { focusElement } from 'interactions/focusable';
 
 function Focusable({ items, render }) {
   const { latestEvent } = useAppState();

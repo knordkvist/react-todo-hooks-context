@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppState } from '../context/app-state';
-import { useFocusable } from '../interactions/focusable';
+import { useAppState } from 'context/app-state';
+import { useFocusable } from 'interactions/focusable';
 
 const ListItem = styled.li`
   .item-add-img {
@@ -17,7 +17,7 @@ const ListItem = styled.li`
   }
 `;
 
-export function AddItem() {
+export default function AddItem() {
   const { addItem } = useAppState();
   const focusable = useFocusable('addItem');
 

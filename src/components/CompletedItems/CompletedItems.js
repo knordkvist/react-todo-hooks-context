@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import ItemList from './ItemList';
+import ItemList from 'components/ItemList';
 import classNames from 'classnames';
-import { useAppState } from '../context/app-state';
+import { useAppState } from 'context/app-state';
 
 const Container = styled.div`
   ul.check-list .item-description-input {

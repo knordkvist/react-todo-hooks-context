@@ -1,7 +1,7 @@
 import React from 'react';
-import TodoItem from '../model/TodoItem';
-import { useAppState } from '../context/app-state';
-import { useFocusable } from '../interactions/focusable';
+import TodoItem from 'model/TodoItem';
+import { useAppState } from 'context/app-state';
+import { useFocusable } from 'interactions/focusable';
 
 export default function Item({ item }) {
   const {

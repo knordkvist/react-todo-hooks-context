@@ -1,9 +1,9 @@
 import React from 'react';
-import { render as renderWithoutProvider, fireEvent } from 'test-utils';
+import { render as renderWithoutProvider, fireEvent } from 'utils/test-utils';
 import '@testing-library/jest-dom/extend-expect';
-import Instructions from './Instructions';
-import ActiveItems from './ActiveItems';
-import { AppStateProvider } from '../context/app-state';
+import Instructions from 'components/Instructions';
+import ActiveItems from 'components/ActiveItems';
+import { AppStateProvider } from 'context/app-state';
 
 const render = renderWithoutProvider(AppStateProvider);
 

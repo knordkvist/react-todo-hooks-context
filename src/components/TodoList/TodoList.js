@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppState } from '../context/app-state';
-import Header from './Header';
-import ActiveItems from './ActiveItems';
-import CompletedItems from './CompletedItems';
-import Instructions from './Instructions';
+import { useAppState } from 'context/app-state';
+import Header from 'components/Header';
+import ActiveItems from 'components/ActiveItems';
+import CompletedItems from 'components/CompletedItems';
+import Instructions from 'components/Instructions';
 
 const AppContainer = styled.div`
   position: relative;
