@@ -1,8 +1,7 @@
 A todo list implemented in React.
 
-A poor man's Redux is implemented using Context (see [app-state.js](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/context/app-state.js)).
-The Context is hosting [a simple reducer](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/context/app-reducer.js)
+![](https://user-images.githubusercontent.com/2745525/88288451-12570200-ccf4-11ea-8fab-b27cd5e784e5.gif)
+
+A poor man's Redux (well, it's a container for our application state at least...) is implemented using Context (see [app-state.js](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/context/app-state.js)).
 
 Implemented using a test-driven approach with Jest and React Testing Library.
-
-Fancy fade-in effect of completed todo-items courtesy of React Transition Group, implemented using TransitionGroup in [this small wrapper component](https://github.com/knordkvist/react-todo-hooks-context/blob/master/src/components/CompletedItems.js#L43-L51).
