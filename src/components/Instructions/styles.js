@@ -6,9 +6,11 @@ const Instructions = styled.div`
   align-items: center;
   justify-content: space-around;
   height: ${(props) => props.theme.instructionsHeight};
-  background-color: ${(props) => props.theme.backgroundColorSecondary};
-  * {
+  && {
     background-color: ${(props) => props.theme.backgroundColorSecondary};
+    * {
+      background-color: ${(props) => props.theme.backgroundColorSecondary};
+    }
   }
   width: 100%;
   bottom: 0;
