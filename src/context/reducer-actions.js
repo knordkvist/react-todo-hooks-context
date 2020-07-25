@@ -43,6 +43,12 @@ const mergeItem = (itemId) => ({
 });
 mergeItem.type = 'app-state/mergeItem';
 
+const deleteItem = (itemId) => ({
+  type: deleteItem.type,
+  payload: { id: itemId },
+});
+deleteItem.type = 'app-state/deleteItem';
+
 export {
   nextId,
   addItem,
@@ -51,4 +57,5 @@ export {
   editItem,
   splitItem,
   mergeItem,
+  deleteItem,
 };

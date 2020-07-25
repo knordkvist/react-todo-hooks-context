@@ -167,3 +167,19 @@ describe('merging items', () => {
     expect(input).toHaveFocus();
   });
 });
+
+it('can delete items', () => {
+  const keep = { description: 'keep me', id: 0 };
+  const deleteMe = { description: 'delete', id: 1 };
+  const { deleteButton, todoItemContainer } = render(<ActiveItems />, {
+    todoItems: chainActions(
+      reducerActions.addItem(keep),
+      reducerActions.addItem(deleteMe)
+    ),
+  });
+
+  userEvent.click(deleteButton(deleteMe.id));
+
+  expect(todoItemContainer(deleteMe.id)).not.toBeInTheDocument();
+  expect(todoItemContainer(keep.id)).toBeInTheDocument();
+});

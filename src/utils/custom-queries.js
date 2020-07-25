@@ -21,6 +21,8 @@ const toggleCheckbox = (element, itemId) =>
 const descriptionInput = (element, itemId) =>
   queryByLabelText(todoItemContainer(element, itemId), 'Todo description');
 const dismissButton = (element) => queryByText(element, 'Got it!');
+const deleteButton = (element, elementId) =>
+  queryByLabelText(todoItemContainer(element, elementId), 'Delete todo');
 
 export {
   newItemInput,
@@ -32,4 +34,5 @@ export {
   toggleCheckbox,
   descriptionInput,
   dismissButton,
+  deleteButton,
 };

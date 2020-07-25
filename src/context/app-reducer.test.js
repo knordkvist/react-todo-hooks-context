@@ -6,6 +6,7 @@ import {
   editItem,
   splitItem,
   mergeItem,
+  deleteItem,
 } from './reducer-actions';
 import TodoItem from '../model/TodoItem';
 import TodoItems from '../model/TodoItems';
@@ -131,6 +132,18 @@ describe('merging items', () => {
 
     expect(expected).toEqual(split);
   });
+});
+
+it('can delete items', () => {
+  const expected = chainActions(
+    addItem({ description: 'an existing item', id: 0 })
+  );
+  const deleteMe = { description: 'to be deleted', id: 1 };
+  const initial = chainActionsWithState(expected, addItem(deleteMe));
+
+  const actual = chainActionsWithState(initial, deleteItem(deleteMe.id));
+
+  expect(actual).toEqual(expected);
 });
 
 export const utils = {

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TodoItem from 'model/TodoItem';
 import { useAppState } from 'context/app-state';
 import { useFocusable } from 'interactions/focusable';
+import * as S from './styles';
 
 export default function Item({ item }) {
   const {
@@ -10,7 +11,9 @@ export default function Item({ item }) {
     editItem,
     splitItem,
     mergeItem,
+    deleteItem,
   } = useAppState();
+  const [itemFocused, setItemFocused] = useState(false);
   const focusable = useFocusable(item.id);
 
   const onKeyDown = (event) => {
@@ -32,7 +35,7 @@ export default function Item({ item }) {
   };
 
   return (
-    <li className="todo-item" data-testid={item.id}>
+    <S.Item className="todo-item" data-testid={item.id}>
       <input
         type="checkbox"
         checked={item.state === TodoItem.State.Completed ? true : undefined}
@@ -53,7 +56,15 @@ export default function Item({ item }) {
         data-item-id={item.id}
         onChange={(e) => editItem(item.id, e.target.value)}
         onKeyDown={onKeyDown}
+        onFocus={() => setItemFocused(true)}
+        onBlur={() => setItemFocused(false)}
       />
-    </li>
+      <S.DeleteButton
+        type="button"
+        aria-label="Delete todo"
+        onClick={() => deleteItem(item.id)}
+        itemFocused={itemFocused}
+      ></S.DeleteButton>
+    </S.Item>
   );
 }

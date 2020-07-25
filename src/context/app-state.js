@@ -63,6 +63,10 @@ const AppStateProvider = ({ initialState = state, children }) => {
     sendEvent(EventType.ItemMerged, { mergedIntoItem });
   };
 
+  const deleteItem = (itemId) => {
+    dispatch(actions.deleteItem(deleteItem));
+  };
+
   return (
     <AppStateContext.Provider
       value={{
@@ -73,6 +77,7 @@ const AppStateProvider = ({ initialState = state, children }) => {
         editItem,
         splitItem,
         mergeItem,
+        deleteItem,
         instructionsVisible,
         dismissInstructions,
         latestEvent,

@@ -5,7 +5,7 @@ import {
   waitFor,
 } from 'utils/test-utils';
 import { utils as reducerUtils } from 'context/app-reducer.test';
-import { addItem } from 'context/reducer-actions';
+import { addItem, completeItem } from 'context/reducer-actions';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import ActiveItems from 'components/ActiveItems';
@@ -106,4 +106,22 @@ it("hides the number of completed items when there aren't any", () => {
   const { completedItemsContainer } = render(<CompletedItems />);
 
   expect(completedItemsContainer()).toHaveClass('hidden');
+});
+
+it('can delete items', () => {
+  const keep = { description: 'keep me', id: 0 };
+  const deleteMe = { description: 'delete', id: 1 };
+  const { deleteButton, todoItemContainer } = render(<CompletedItems />, {
+    todoItems: chainActions(
+      addItem(keep),
+      completeItem(keep.id),
+      addItem(deleteMe),
+      completeItem(deleteMe.id)
+    ),
+  });
+
+  userEvent.click(deleteButton(deleteMe.id));
+
+  expect(todoItemContainer(deleteMe.id)).not.toBeInTheDocument();
+  expect(todoItemContainer(keep.id)).toBeInTheDocument();
 });
