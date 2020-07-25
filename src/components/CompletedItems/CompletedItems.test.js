@@ -51,35 +51,6 @@ it("can't edit item description", async () => {
   expect(descriptionInput(item.id)).toHaveAttribute('readonly');
 });
 
-describe('pressing enter when editing description', () => {
-  it('does not split items', async () => {
-    const itemId = 0;
-    const {
-      completedItemsContainer,
-      descriptionInput,
-      todoItemContainer,
-      todoItems,
-    } = render(<CompletedItems />, {
-      todoItems: chainActions(
-        addItem({
-          description: 'completed item',
-          state: TodoItem.State.Completed,
-          id: itemId,
-        })
-      ),
-    });
-
-    const input = descriptionInput(itemId);
-    input.selectionStart = 2;
-    fireEvent.keyDown(input, { key: 'Enter' });
-
-    expect(completedItemsContainer()).toContainElement(
-      todoItemContainer(itemId)
-    );
-    expect(todoItems()).toHaveLength(1);
-  });
-});
-
 it('shows the number of completed items', async () => {
   const oneCompletedItem = chainActions(
     addItem({ state: TodoItem.State.Completed }),
