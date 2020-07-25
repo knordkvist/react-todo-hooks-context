@@ -9,17 +9,15 @@ export default function AddItem() {
 
   return (
     <S.AddItem>
-      <label>
-        <span className="item-add-img" aria-label="Plus sign" role="img"></span>
-        <input
-          type="text"
-          placeholder="todo..."
-          ref={focusable}
-          value=""
-          onChange={(event) => addItem(event.target.value)}
-          autoFocus
-        />
-      </label>
+      <span className="item-add-img" aria-label="Plus sign" role="img"></span>
+      <input
+        type="text"
+        placeholder="todo..."
+        ref={focusable}
+        value=""
+        onChange={(event) => addItem(event.target.value)}
+        autoFocus
+      />
     </S.AddItem>
   );
 }

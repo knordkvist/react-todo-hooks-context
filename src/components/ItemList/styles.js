@@ -8,6 +8,7 @@ export const ItemList = styled.ul`
     display: flex;
     margin-top: 5px;
     margin-bottom: 5px;
+    align-items: center;
   }
 
   li input {
@@ -17,11 +18,6 @@ export const ItemList = styled.ul`
 
   li input:focus {
     outline: none;
-  }
-
-  li label {
-    display: flex;
-    align-items: center;
   }
 
   li input[type='checkbox'] {
