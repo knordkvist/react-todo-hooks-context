@@ -11,7 +11,7 @@ const DeleteButton = styled.button`
   flex: none;
   width: 24px;
   height: 24px;
-  opacity: 0.54;
+  opacity: ${(props) => props.theme.secondaryOpacity};
   visibility: hidden;
   ${Item}:hover & {
     visibility: visible;

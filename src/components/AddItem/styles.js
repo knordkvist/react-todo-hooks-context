@@ -10,6 +10,6 @@ export const AddItem = styled.li`
     margin-left: 4px;
     margin-right: 3px;
     margin-top: 3px;
-    opacity: 0.54;
+    opacity: opacity: ${(props) => props.theme.secondaryOpacity};
   }
 `;
