@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-const Item = styled.li``;
+const Item = styled.li`
+  position: relative;
+`;
 
 const DeleteButton = styled.button`
   border: 0;
@@ -20,6 +22,11 @@ const DeleteButton = styled.button`
   :hover {
     opacity: 0.87;
     background-color: rgba(95, 99, 104, 0.157);
+    border-radius: 50%;
+  }
+  :focus {
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.6);
     border-radius: 50%;
   }
 `;
