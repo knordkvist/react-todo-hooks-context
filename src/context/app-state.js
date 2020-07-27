@@ -64,7 +64,7 @@ const AppStateProvider = ({ initialState = state, children }) => {
   };
 
   const deleteItem = (itemId) => {
-    dispatch(actions.deleteItem(deleteItem));
+    dispatch(actions.deleteItem(itemId));
   };
 
   return (

@@ -56,7 +56,11 @@ export default produce((draft, { type, payload = {} } = {}) => {
     }
     case deleteItem.type: {
       const itemIndex = draft.items.indexOf(item);
-      if (itemIndex === 0) return;
+
+      if (itemIndex === -1) {
+        console.warn('Could not find item with id', payload.id);
+        return;
+      }
 
       draft.items.splice(itemIndex, 1);
       return;

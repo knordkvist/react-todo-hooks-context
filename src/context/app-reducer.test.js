@@ -135,11 +135,14 @@ describe('merging items', () => {
 });
 
 it('can delete items', () => {
-  const expected = chainActions(
-    addItem({ description: 'an existing item', id: 0 })
+  const deleteMe = { description: 'to be deleted', id: 0 };
+  const completed = { description: 'completed', id: 1 };
+  const expected = chainActions(addItem(completed), completeItem(completed.id));
+  const initial = chainActions(
+    addItem(deleteMe),
+    addItem(completed),
+    completeItem(completed.id)
   );
-  const deleteMe = { description: 'to be deleted', id: 1 };
-  const initial = chainActionsWithState(expected, addItem(deleteMe));
 
   const actual = chainActionsWithState(initial, deleteItem(deleteMe.id));
 
