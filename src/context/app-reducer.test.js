@@ -10,13 +10,7 @@ import {
 } from './reducer-actions';
 import TodoItem from '../model/TodoItem';
 import TodoItems from '../model/TodoItems';
-
-const chainActions = (...actions) =>
-  chainActionsWithState(undefined, ...actions);
-const chainActionsWithState = (initialState = appReducer(), ...actions) =>
-  actions.reduce((state, action) => {
-    return appReducer(state, action);
-  }, initialState);
+import { chainActions, chainActionsWithState } from 'utils/test-utils';
 
 // This is a useful feature of reducers: if we decide to use Redux later,
 // it will call each reducer with no state to produce the initial state for the store.
@@ -148,8 +142,3 @@ it('can delete items', () => {
 
   expect(actual).toEqual(expected);
 });
-
-export const utils = {
-  chainActions,
-  chainActionsWithState,
-};

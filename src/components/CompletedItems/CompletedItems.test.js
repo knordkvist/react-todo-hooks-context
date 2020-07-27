@@ -4,7 +4,7 @@ import {
   fireEvent,
   waitFor,
 } from 'utils/test-utils';
-import { utils as reducerUtils } from 'context/app-reducer.test';
+import { chainActions } from 'utils/test-utils';
 import { addItem, completeItem } from 'context/reducer-actions';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +14,6 @@ import { AppStateProvider } from 'context/app-state';
 import TodoItem from 'model/TodoItem';
 
 const render = renderWithoutProvider(AppStateProvider);
-const { chainActions } = reducerUtils;
 
 it('can uncheck completed items', async () => {
   const item = {

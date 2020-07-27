@@ -5,6 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import * as customQueries from './custom-queries';
 import { curry } from 'ramda';
 import theme from '../theme';
+import appReducer from 'context/app-reducer';
 
 const AllProviders = (AppStateProvider, initialState) => ({ children }) => (
   <AppStateProvider initialState={initialState}>
@@ -62,7 +63,15 @@ const customRender = curry(
   }
 );
 
+const chainActions = (...actions) =>
+  chainActionsWithState(undefined, ...actions);
+const chainActionsWithState = (initialState = appReducer(), ...actions) =>
+  actions.reduce((state, action) => {
+    return appReducer(state, action);
+  }, initialState);
+
 // re-export everything
 export * from '@testing-library/react';
 // override render method
 export { customRender as render };
+export { chainActions, chainActionsWithState };

@@ -6,11 +6,10 @@ import ActiveItems from 'components/ActiveItems';
 import CompletedItems from 'components/CompletedItems';
 import { AppStateProvider } from 'context/app-state';
 import TodoItem from 'model/TodoItem';
-import { utils as reducerUtils } from 'context/app-reducer.test';
+import { chainActions } from 'utils/test-utils';
 import * as reducerActions from 'context/reducer-actions';
 
 const render = renderWithoutProvider(AppStateProvider);
-const { chainActions } = reducerUtils;
 
 it('adds an active todo when typing a description', async () => {
   const {
