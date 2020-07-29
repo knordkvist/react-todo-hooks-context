@@ -24,7 +24,8 @@ export default function Item({ item }) {
     const actions = {
       Enter: (event) => splitItem(item.id, event.target.selectionStart),
       Backspace: (event) => {
-        if (event.target.selectionStart > 0) return;
+        const { selectionStart, selectionEnd } = event.target;
+        if (selectionStart + selectionEnd > 0) return;
         mergeItem(item.id);
       },
     };
