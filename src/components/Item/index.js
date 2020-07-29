@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoItem from 'model/TodoItem';
 import { useAppState } from 'context/app-state';
-import { useFocusable } from 'interactions/focusable';
+import { focusable } from 'interactions/focusable';
 import * as S from './styles';
 
 export default function Item({ item }) {
@@ -14,24 +14,27 @@ export default function Item({ item }) {
     deleteItem,
   } = useAppState();
   const [itemFocused, setItemFocused] = useState(false);
-  const focusable = useFocusable(item.id);
+  const { register, runPendingActions } = focusable(item.id);
 
-  const onKeyDown = (event) => {
-    if (item.state === TodoItem.State.Completed) return;
+  useEffect(() => {
+    runPendingActions();
+  }, [item.description, runPendingActions]);
 
-    switch (event.key) {
-      case 'Enter': {
-        splitItem(item.id, event.target.selectionStart);
-        return;
-      }
-      case 'Backspace': {
+  const keyActions = (key) => {
+    const actions = {
+      Enter: (event) => splitItem(item.id, event.target.selectionStart),
+      Backspace: (event) => {
         if (event.target.selectionStart > 0) return;
         mergeItem(item.id);
-        return;
-      }
-      default:
-        return;
-    }
+      },
+    };
+
+    if (item.state === TodoItem.State.Completed) return;
+
+    const action = actions[key];
+    if (action === undefined) return undefined;
+
+    return (event) => action(event);
   };
 
   return (
@@ -52,10 +55,16 @@ export default function Item({ item }) {
         type="text"
         readOnly={item.state === TodoItem.State.Completed}
         value={item.description}
-        ref={focusable}
+        ref={register}
         data-item-id={item.id}
-        onChange={(e) => editItem(item.id, e.target.value)}
-        onKeyDown={onKeyDown}
+        onChange={(e) => {
+          editItem(item.id, e.target.value);
+        }}
+        onKeyDown={(event) => {
+          const action = keyActions(event.key);
+          if (action === undefined) return;
+          action(event);
+        }}
         onFocus={() => setItemFocused(true)}
         onBlur={() => setItemFocused(false)}
       />

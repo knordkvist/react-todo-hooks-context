@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppState } from 'context/app-state';
-import { useFocusable } from 'interactions/focusable';
+import { focusable } from 'interactions/focusable';
 import * as S from './styles';
 
 export default function AddItem() {
   const { addItem } = useAppState();
-  const focusable = useFocusable('addItem');
+  const { register, runPendingActions } = focusable('addItem');
+
+  useEffect(() => {
+    runPendingActions();
+  });
 
   return (
     <S.AddItem>
@@ -13,7 +17,7 @@ export default function AddItem() {
       <input
         type="text"
         placeholder="todo..."
-        ref={focusable}
+        ref={register}
         value=""
         onChange={(event) => addItem(event.target.value)}
         autoFocus

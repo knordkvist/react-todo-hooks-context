@@ -2,6 +2,7 @@ import React, { createContext, useReducer, useState, useContext } from 'react';
 
 import appReducer from './app-reducer';
 import * as actions from './reducer-actions';
+import { enqueueFocusAction, deregister } from 'interactions/focusable';
 
 const state = { todoItems: appReducer(), instructionsVisible: true };
 const AppStateContext = createContext();
@@ -10,6 +11,7 @@ const EventType = {
   ItemAdded: 'itemAdded',
   ItemSplit: 'itemSplit',
   ItemMerged: 'itemMerged',
+  ItemDeleted: 'itemDeleted',
 };
 
 const useAppState = () => {
@@ -20,11 +22,34 @@ const useAppState = () => {
   return context;
 };
 
+function setupFocusAction(eventType, eventData) {
+  switch (eventType) {
+    case EventType.ItemAdded: {
+      enqueueFocusAction(eventData.itemId, {
+        caretAt: eventData.description.length,
+      });
+      break;
+    }
+    case EventType.ItemSplit: {
+      enqueueFocusAction(eventData.newItemId, { caretAt: 0 });
+      break;
+    }
+    case EventType.ItemMerged: {
+      const item = eventData.mergedIntoItem;
+      enqueueFocusAction(item.id, { caretAt: item.description.length });
+      break;
+    }
+    case EventType.ItemDeleted: {
+      deregister(eventData.itemId);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
 const AppStateProvider = ({ initialState = state, children }) => {
   const [todoItems, dispatch] = useReducer(appReducer, initialState.todoItems);
-  const [latestEvent, setLatestEvent] = useState(null);
-  const sendEvent = (eventType, data) =>
-    setLatestEvent({ type: eventType, data });
   const [instructionsVisible, setInstructionsVisible] = useState(
     initialState.instructionsVisible
   );
@@ -37,7 +62,7 @@ const AppStateProvider = ({ initialState = state, children }) => {
   const addItem = (description) => {
     const action = actions.addItem({ description });
     dispatch(action);
-    sendEvent(EventType.ItemAdded, {
+    setupFocusAction(EventType.ItemAdded, {
       itemId: action.payload.id,
       description,
     });
@@ -46,7 +71,7 @@ const AppStateProvider = ({ initialState = state, children }) => {
   const splitItem = (itemId, splitAt) => {
     const action = actions.splitItem(itemId, splitAt);
     dispatch(action);
-    sendEvent(EventType.ItemSplit, {
+    setupFocusAction(EventType.ItemSplit, {
       splitItemId: itemId,
       newItemId: action.payload.newItemId,
     });
@@ -60,11 +85,12 @@ const AppStateProvider = ({ initialState = state, children }) => {
 
     dispatch(actions.mergeItem(itemId));
     const mergedIntoItem = todoItems.items[removedItemIndex - 1];
-    sendEvent(EventType.ItemMerged, { mergedIntoItem });
+    setupFocusAction(EventType.ItemMerged, { mergedIntoItem });
   };
 
   const deleteItem = (itemId) => {
     dispatch(actions.deleteItem(itemId));
+    setupFocusAction(EventType.ItemDeleted, { itemId });
   };
 
   return (
@@ -80,7 +106,6 @@ const AppStateProvider = ({ initialState = state, children }) => {
         deleteItem,
         instructionsVisible,
         dismissInstructions,
-        latestEvent,
       }}
     >
       {children}
