@@ -1,15 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAppState } from 'context/app-state';
 import { focusable } from 'interactions/focusable';
 import * as S from './styles';
 
 export default function AddItem() {
   const { addItem } = useAppState();
-  const { register, runPendingActions } = focusable('addItem');
-
-  useEffect(() => {
-    runPendingActions();
-  });
+  const { register } = focusable('addItem');
 
   return (
     <S.AddItem>
