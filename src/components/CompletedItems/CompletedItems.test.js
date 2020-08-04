@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  render as renderWithoutProvider,
-  fireEvent,
-  waitFor,
-} from 'utils/test-utils';
+import { render as renderWithoutProvider, waitFor } from 'utils/test-utils';
 import { chainActions } from 'utils/test-utils';
 import { addItem, completeItem } from 'context/reducer-actions';
 import '@testing-library/jest-dom/extend-expect';
