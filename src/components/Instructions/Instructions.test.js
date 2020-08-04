@@ -36,7 +36,7 @@ it('is automatically dismissed when an item is added', async () => {
 
   await addItem('a');
 
-  expect(instructionsContainer()).toBeNull();
+  expect(instructionsContainer()).not.toBeInTheDocument();
 });
 
 it('renders correctly', () => {
@@ -44,7 +44,6 @@ it('renders correctly', () => {
 
   expect(container.firstChild).toMatchInlineSnapshot(`
     .c0 {
-      position: absolute;
       display: -webkit-box;
       display: -webkit-flex;
       display: -ms-flexbox;
@@ -68,6 +67,7 @@ it('renders correctly', () => {
     }
 
     .c0.c0 {
+      grid-column: 1/-1;
       background-color: #fff2ab;
     }
 

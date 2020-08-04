@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 const Instructions = styled.div`
-  position: absolute;
-  display: ${(props) => (props.visible ? 'flex' : 'none')};
+  display: flex;
   align-items: center;
   justify-content: space-around;
-  height: ${(props) => props.theme.instructionsHeight};
+  height: 40px;
   && {
+    grid-column: 1/-1;
     background-color: ${(props) => props.theme.backgroundColorSecondary};
     * {
       background-color: ${(props) => props.theme.backgroundColorSecondary};
