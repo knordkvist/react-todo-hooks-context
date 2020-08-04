@@ -22,7 +22,20 @@ export default function Item({ item }) {
 
   const keyActions = (key) => {
     const actions = {
-      Enter: (event) => splitItem(item.id, event.target.selectionStart),
+      Enter: (event) => {
+        const { selectionStart, selectionEnd } = event.target;
+
+        // A range is selected
+        if (selectionStart !== selectionEnd) {
+          // Delete the selected text before splitting
+          editItem(
+            item.id,
+            item.description.substring(0, selectionStart) +
+              item.description.substring(selectionEnd)
+          );
+        }
+        splitItem(item.id, selectionStart);
+      },
       Backspace: (event) => {
         const { selectionStart, selectionEnd } = event.target;
         if (selectionStart + selectionEnd > 0) return;

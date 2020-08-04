@@ -36,3 +36,32 @@ it("doesn't try to merge items when a range is selected", async () => {
   expect(input).toHaveValue('');
   expect(descriptionInput(item.id)).toHaveValue(item.description);
 });
+
+it('deletes the selected range before splitting an item', () => {
+  const description1 = 'split';
+  const divider = '____';
+  const description2 = 'item';
+  const item = new TodoItem({
+    description: description1 + divider + description2,
+  });
+  const items = chainActions(addItem(item));
+  //render with item
+  const { descriptionInput, todoItems, queryByDisplayValue } = render(
+    <WithItemsFromContext />,
+    {
+      todoItems: items,
+    }
+  );
+  const input = descriptionInput(item.id);
+
+  input.selectionStart = description1.length;
+  input.selectionEnd = description1.length + divider.length;
+  userEvent.type(input, '{enter}');
+
+  expect(todoItems()).toHaveLength(2);
+  expect(queryByDisplayValue(description1)).toBeInTheDocument();
+  const description2Input = queryByDisplayValue(description2);
+  expect(description2Input).toBeInTheDocument();
+  expect(description2Input).toHaveFocus();
+  expect(description2Input.selectionStart).toBe(0);
+});
