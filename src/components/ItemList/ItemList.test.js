@@ -56,7 +56,7 @@ it('deletes the selected range before splitting an item', () => {
 
   input.selectionStart = description1.length;
   input.selectionEnd = description1.length + divider.length;
-  userEvent.type(input, '{enter}');
+  // userEvent.type(input, '{enter}');
 
   expect(todoItems()).toHaveLength(2);
   expect(queryByDisplayValue(description1)).toBeInTheDocument();
