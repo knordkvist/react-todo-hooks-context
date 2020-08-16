@@ -21,7 +21,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom-fourteen",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -42,6 +43,8 @@
     "singleQuote": true
   },
   "devDependencies": {
+    "cypress": "^4.12.0",
+    "eslint-plugin-cypress": "^2.11.1",
     "jest-styled-components": "^7.0.2",
     "prettier": "^2.0.5"
   }
